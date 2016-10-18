@@ -1,3 +1,4 @@
+import sys
 import numpy as np
 import scipy.linalg as scialg
 import scipy.optimize as sciopt
@@ -9,8 +10,8 @@ def register(a, b):
     a_bar = np.mean(a, axis=1)
     b_bar = np.mean(b, axis=1)
 
-    a_tilde = a - a_bar
-    b_tilde = b - b_bar
+    a_tilde = (a.T - a_bar).T
+    b_tilde = (b.T - b_bar).T
 
     r = _lsq(a_tilde, b_tilde)
 
@@ -21,15 +22,12 @@ def register(a, b):
 
 def _lsq(a_tilde, b_tilde):
 
-    r = b_tilde.dot(a_tilde.T.dot(a_tilde.T.dot(np.invert(a_tilde))))
+    r = b_tilde.dot(scialg.pinv2(a_tilde))
 
     r = r.dot(scialg.inv(scialg.sqrtm(r.T.dot(r))))
 
-    try:
-        if scialg.det(r) != 1:
-            raise ValueError
-    except ValueError:
-        print('Invalid rotation')
+    if scialg.det(r) != 1:
+        raise ValueError('Error: Invalid rotation')
 
     epsilon = 1e-6
 
@@ -39,8 +37,8 @@ def _lsq(a_tilde, b_tilde):
 
     while start:
         b_u = []
-        for point in b_tilde:
-            b_u.append(np.dot(np.invert(r), point))
+        for vec in range(b_tilde.shape[1]):
+            b_u.append(np.dot(scialg.pinv(r), b_tilde[:, vec]))
 
         alpha = sciopt.leastsq(_f, np.array([0, 0, 0]), (a_tilde, b_u))
         delta_r = np.identity(3) + ft.skew(alpha)
