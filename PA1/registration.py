@@ -7,11 +7,20 @@ import frame_transformations as ft
 
 def register(a, b):
     # NOTE: a, b are arrays of column vectors
-    a_bar = np.mean(a, axis=1)
-    b_bar = np.mean(b, axis=1)
+    a_bar = np.mean(a, axis=0).T
+    b_bar = np.mean(b, axis=0).T
 
-    a_tilde = (a.T - a_bar).T
-    b_tilde = (b.T - b_bar).T
+    a_tilde = np.empty([len(a), 3])
+    print a_tilde
+
+    b_tilde = np.array([])
+
+    for i in range(len(a)):
+        a_tilde[i] = a[i] - a_bar
+        #b_tilde.put((b[i] - b_bar), i)
+
+    print a_tilde
+    print b_tilde
 
     r = _lsq(a_tilde, b_tilde)
 
@@ -22,9 +31,16 @@ def register(a, b):
 
 def _lsq(a_tilde, b_tilde):
 
-    r = b_tilde.dot(scialg.pinv2(a_tilde))
+    #r = b_tilde.dot(scialg.pinv2(a_tilde))
 
-    r = r.dot(scialg.inv(scialg.sqrtm(r.T.dot(r))))
+    #r = r.dot(scialg.inv(scialg.sqrtm(r.T.dot(r))))
+
+    r = (scialg.pinv(a_tilde)).dot(b_tilde)
+    r = r.T
+
+    print r
+
+    print scialg.det(r)
 
     if scialg.det(r) != 1:
         raise ValueError('Error: Invalid rotation')
