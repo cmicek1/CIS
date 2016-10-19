@@ -11,16 +11,14 @@ def register(a, b):
     b_bar = np.mean(b, axis=0).T
 
     a_tilde = np.empty([len(a), 3])
-    print a_tilde
-
-    b_tilde = np.array([])
+    b_tilde = np.empty([len(b), 3])
 
     for i in range(len(a)):
         a_tilde[i] = a[i] - a_bar
-        #b_tilde.put((b[i] - b_bar), i)
+        b_tilde[i] = b[i] - b_bar #should probably assert that a and b are same length
 
-    print a_tilde
-    print b_tilde
+    #print a_tilde
+    #print b_tilde
 
     r = _lsq(a_tilde, b_tilde)
 
@@ -31,14 +29,14 @@ def register(a, b):
 
 def _lsq(a_tilde, b_tilde):
 
-    #r = b_tilde.dot(scialg.pinv2(a_tilde))
+    r = b_tilde.T.dot(scialg.pinv(a_tilde.T))
+    print r
 
-    #r = r.dot(scialg.inv(scialg.sqrtm(r.T.dot(r))))
-
-    r = (scialg.pinv(a_tilde)).dot(b_tilde)
-    r = r.T
+    r = r.dot(scialg.inv(scialg.sqrtm(r.T.dot(r))))
 
     print r
+
+    #print r
 
     print scialg.det(r)
 
