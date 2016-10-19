@@ -17,8 +17,8 @@ def register(a, b):
         a_tilde[i] = a[i] - a_bar
         b_tilde[i] = b[i] - b_bar #should probably assert that a and b are same length
 
-    #print a_tilde
-    #print b_tilde
+    print a_tilde
+    print b_tilde
 
     r = _lsq(a_tilde, b_tilde)
 
