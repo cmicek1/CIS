@@ -1,8 +1,5 @@
-import sys
 import numpy as np
 import scipy.linalg as scialg
-import scipy.optimize as sciopt
-import frame_transformations as ft
 
 
 def register(a, b):
