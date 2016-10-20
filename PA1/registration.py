@@ -44,10 +44,14 @@ def _lsq(a_tilde, b_tilde):
         for i in range(len(b_tilde)):
             b_u[i] = (np.dot(scialg.pinv(r), b_tilde[i]))
 
-        print b_u
-
         alpha = sciopt.leastsq(_f, np.array([0, 0, 0]), (a_tilde, b_u))
+
+        print "alpha:"
+        print alpha #currently not calculating alpha correctly
+
         delta_r = np.identity(3) + ft.skew(alpha)
+
+        print delta_r
 
         new_r = r.dot(delta_r)
 
@@ -62,6 +66,15 @@ def _f(x, *args):
 
     a_tilde = args[0]
     b_u = args[1]
+    error = np.array([0.0, 0.0, 0.0])
 
-    error = a_tilde - b_u + np.cross(x, a_tilde)
-    return x[0], x[1], x[2]
+    print "\ninside function"
+    print a_tilde
+    print b_u
+    print "error:"
+    print error
+
+    for i in range(len(a_tilde)):
+        error = error + (a_tilde[i] - b_u[i] + np.cross(x, a_tilde[i]))
+
+    return error
