@@ -44,7 +44,12 @@ def _lsq(a_tilde, b_tilde):
         for i in range(len(b_tilde)):
             b_u[i] = (np.dot(scialg.pinv(r), b_tilde[i]))
 
-        alpha = sciopt.leastsq(_f, np.array([0, 0, 0]), (a_tilde, b_u))
+        alpha_guess = np.array([0, 0, 0])
+
+       # alpha = np.linalg.leastsq(_f, alpha_guess, (a_tilde, b_u))
+
+        alpha = sciopt.minimize(_f, alpha_guess, args = (a_tilde, b_u))
+        print alpha.x
 
         print "alpha:"
         print alpha #currently not calculating alpha correctly
@@ -63,18 +68,12 @@ def _lsq(a_tilde, b_tilde):
 
 
 def _f(x, *args):
-
     a_tilde = args[0]
     b_u = args[1]
-    error = np.array([0.0, 0.0, 0.0])
-
-    print "\ninside function"
-    print a_tilde
-    print b_u
-    print "error:"
-    print error
+    error = 0
 
     for i in range(len(a_tilde)):
-        error = error + (a_tilde[i] - b_u[i] + np.cross(x, a_tilde[i]))
+        eadd = (a_tilde[i] - b_u[i] + np.cross(x, a_tilde[i]))
+        error = error + eadd.dot(eadd)
 
     return error
