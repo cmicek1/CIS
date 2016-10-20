@@ -68,13 +68,12 @@ def _lsq(a_tilde, b_tilde):
         delta_r = np.identity(3) + ft.skew(alpha.x)
 
         new_r = r.dot(delta_r)
+        print new_r
 
         start = scialg.norm(new_r - r, 2) > epsilon
 
         r = new_r
 
-    r, q = np.linalg.qr(r)
-    print scialg.det(r)
     return r
 
 
