@@ -15,7 +15,9 @@ def register(a, b):
 
     # Method using SVD to directly solve for R
 
-    H = a.dot(b.T)
+    sigma = np.sum(np.apply_along_axis(scialg.norm, 0, a_tilde)) / np.sum(np.apply_along_axis(scialg.norm, 0, b_tilde))
+
+    H = (sigma * a).dot(b.T)
 
     u, s, v_t = scialg.svd(H)
 
@@ -29,4 +31,4 @@ def register(a, b):
 
     p = b_bar - r.dot(a_bar)
 
-    return r, p
+    return r, p, sigma
