@@ -7,21 +7,15 @@ import frame_transformations as ft
 
 def register(a, b):
     # NOTE: a, b are arrays of column vectors
-    a_bar = np.mean(a, axis=0).T
-    b_bar = np.mean(b, axis=0).T
+    a_bar = np.mean(a, axis=1, keepdims=True)
+    b_bar = np.mean(b, axis=1, keepdims=True)
 
-    a_tilde = np.empty([len(a), 3])
-    b_tilde = np.empty([len(b), 3])
-
-    for i in range(len(a)):
-        a_tilde[i] = a[i] - a_bar
-        b_tilde[i] = b[i] - b_bar #should probably assert that a and b are same length
+    a_tilde = a - a_bar
+    b_tilde = b - b_bar
 
     # Method using SVD to directly solve for R
 
-    # H = np.zeros((3, 3))
-    # for c in range(a.shape[1]):
-    #     H += a[:, c].dot(b[:, c].T)
+    # H = a.dot(b.T)
     #
     # u, s, v_t = scialg.svd(H)
     #
@@ -29,9 +23,9 @@ def register(a, b):
     # v_t = v_t.T
     #
     # correction = np.identity(v_t.shape[1])
-    # correction[-1, -1] = scialg.det(u.dot(v_t))
+    # correction[-1, -1] = scialg.det(v_t.dot(u))
     #
-    # r =  u.dot(correction.dot(v_t))
+    # r = v_t.dot(correction.dot(u))
 
     r = _lsq(a_tilde, b_tilde)
 
