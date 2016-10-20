@@ -46,17 +46,10 @@ def _lsq(a_tilde, b_tilde):
 
         alpha_guess = np.array([0, 0, 0])
 
-       # alpha = np.linalg.leastsq(_f, alpha_guess, (a_tilde, b_u))
+        alpha = sciopt.minimize(_f, alpha_guess, args = (a_tilde, b_u), options={'disp': False})
+        #solution is in alpha.x
 
-        alpha = sciopt.minimize(_f, alpha_guess, args = (a_tilde, b_u))
-        print alpha.x
-
-        print "alpha:"
-        print alpha #currently not calculating alpha correctly
-
-        delta_r = np.identity(3) + ft.skew(alpha)
-
-        print delta_r
+        delta_r = np.identity(3) + ft.skew(alpha.x)
 
         new_r = r.dot(delta_r)
 
@@ -64,6 +57,8 @@ def _lsq(a_tilde, b_tilde):
 
         r = new_r
 
+    r, q = np.linalg.qr(r)
+    print scialg.det(r)
     return r
 
 
