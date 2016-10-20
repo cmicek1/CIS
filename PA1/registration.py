@@ -12,7 +12,7 @@ def register(a, b):
 
     # Method using SVD to directly solve for R
 
-    sigma = np.sum(np.apply_along_axis(scialg.norm, 0, a_tilde)) / np.sum(np.apply_along_axis(scialg.norm, 0, b_tilde))
+    sigma = np.sum(np.apply_along_axis(scialg.norm, 0, b_tilde)) / np.sum(np.apply_along_axis(scialg.norm, 0, a_tilde))
 
     H = (sigma * a).dot(b.T)
 
