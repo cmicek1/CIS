@@ -17,6 +17,22 @@ def register(a, b):
         a_tilde[i] = a[i] - a_bar
         b_tilde[i] = b[i] - b_bar #should probably assert that a and b are same length
 
+    # Method using SVD to directly solve for R
+
+    # H = np.zeros((3, 3))
+    # for c in range(a.shape[1]):
+    #     H += a[:, c].dot(b[:, c].T)
+    #
+    # u, s, v_t = scialg.svd(H)
+    #
+    # u = u.T
+    # v_t = v_t.T
+    #
+    # correction = np.identity(v_t.shape[1])
+    # correction[-1, -1] = scialg.det(u.dot(v_t))
+    #
+    # r =  u.dot(correction.dot(v_t))
+
     r = _lsq(a_tilde, b_tilde)
 
     p = b_bar - r.dot(a_bar)
