@@ -17,9 +17,6 @@ def register(a, b):
         a_tilde[i] = a[i] - a_bar
         b_tilde[i] = b[i] - b_bar #should probably assert that a and b are same length
 
-    print a_tilde
-    print b_tilde
-
     r = _lsq(a_tilde, b_tilde)
 
     p = b_bar - r.dot(a_bar)
@@ -29,18 +26,11 @@ def register(a, b):
 
 def _lsq(a_tilde, b_tilde):
 
-    r = b_tilde.T.dot(scialg.pinv(a_tilde.T))
-    print r
+    r = b_tilde.T.dot(scialg.pinv2(a_tilde.T))
+    r, q = np.linalg.qr(r)
 
-    r = r.dot(scialg.inv(scialg.sqrtm(r.T.dot(r))))
-
-    print r
-
-    #print r
-
-    print scialg.det(r)
-
-    if scialg.det(r) != 1:
+    if (scialg.det(r) < .9999999) or (scialg.det(r) > 1.000001):
+        print scialg.det(r)
         raise ValueError('Error: Invalid rotation')
 
     epsilon = 1e-6
@@ -50,9 +40,9 @@ def _lsq(a_tilde, b_tilde):
     new_r = None
 
     while start:
-        b_u = []
+        b_u = np.empty([len(b), 3])
         for vec in range(b_tilde.shape[1]):
-            b_u.append(np.dot(scialg.pinv(r), b_tilde[:, vec]))
+            b_u[i] = (np.dot(scialg.pinv(r), b_tilde[:, vec]))
 
         alpha = sciopt.leastsq(_f, np.array([0, 0, 0]), (a_tilde, b_u))
         delta_r = np.identity(3) + ft.skew(alpha)
