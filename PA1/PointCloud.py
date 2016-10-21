@@ -1,5 +1,6 @@
 import numpy as np
 import scipy.linalg as scialg
+import pandas as pd
 import Frame
 
 
@@ -63,11 +64,51 @@ class PointCloud:
         return PointCloud(f.r.dot(self.data) + f.p)
 
 
-def fromfile(fpath, startline, stopline):
+def fromfile(fpath):
     """
     Extract a list of PointClouds from a file.
-    :param fpath:
-    :param startline:
-    :param stopline:
-    :return:
+    :param fpath: The file path to the input data.
+    :type fpath: str
+
+    :return: A list of lists of PointClouds. Each internal list represents a frame, with the clouds therein
+             representing different sets of known points.
+
+    :rtype: [PointCloud][]
     """
+
+    delims = pd.read_csv(fpath, header=None, nrows=1)
+    name = delims.values[0, delims.shape[1] - 1].split('.')[0].split('-')[-1]
+
+    nframes = {'calbody': 1, 'calreadings': delims.values[0, -2], 'empivot': delims.values[0, -2],
+               'optpivot': delims.values[0, -2], 'output1': delims.values[0, -2], 'fiducials': 1, 'fiducialss': 1,
+               'nav': delims.values[0, -2], 'output2': delims.values[0, -2]}
+
+    dframe = pd.read_csv(fpath, header=None, names=['x', 'y', 'z'], skiprows=1)
+
+    start = True
+
+    frame_clouds = []
+    inds = None
+    frame_length = None
+
+    for frame in range(nframes[name]):
+        if start:
+            start = False
+            inds = [0]
+            if nframes[name] == 1:
+                offset = 0
+            else:
+                offset = 1
+            for i in range(delims.shape[1] - 1 - offset):
+                inds.append(inds[i] + delims.values[0, i])
+
+            frame_length = inds[-1]
+
+        clouds = []
+        for points in range(len(inds) - 1):
+            clouds.append(PointCloud(
+                dframe.values[inds[points] + frame_length * frame:inds[points + 1] + frame_length * frame, :].T))
+
+        frame_clouds.append(clouds)
+
+    return frame_clouds
