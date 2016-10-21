@@ -11,5 +11,5 @@ def transform(R, p, v):
 
 def inv_transform(R, p, v):
     R = scialg.inv(R)
-    p = scialg.inv(R).dot(p)
+    p = -1 * scialg.inv(R).dot(p)
     return R.dot(v) + p
