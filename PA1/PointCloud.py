@@ -36,7 +36,7 @@ class PointCloud:
 
         # Method using SVD to directly solve for R
 
-        H = self.data.dot(b.data.T)
+        H = a_tilde.dot(b_tilde.T)
 
         u, s, v_t = scialg.svd(H)
 
