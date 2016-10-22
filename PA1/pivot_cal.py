@@ -34,6 +34,7 @@ def pivot(G):
         R_I[n*3 + 1][4] = -1
         R_I[n*3 + 2][5] = -1
 
+    #solve as an Ax=B problem (R_I * [pcal ppiv] = p_leastsq)
     p_soln = np.linalg.lstsq(R_I, p_lstsq)
 
     p_cal = np.array(p_soln[0][0:3])
