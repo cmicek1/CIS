@@ -16,7 +16,6 @@ def p_dimple(empivot_file):
     :rtype: [PointCloud.PointCloud]
     """
     g_clouds = pc.fromfile(empivot_file)
-    print g_clouds
 
     p_cal, p_piv = piv.pivot(g_clouds)
 

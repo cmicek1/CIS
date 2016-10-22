@@ -1,25 +1,26 @@
 import numpy as np
-import scipy.linalg as scialg
 import registration as reg
-
+import PointCloud as pc
 
 def pivot(G):
-    #G is an array of arrays of points clouds, each with g points, representing different poses of the probe
+    #G is a list of point clouds, each with g points, representing different poses of the probe
 
-    g_first = G[0]
+    g_first = G[0][0].data
+    print g_first
 
     G_0 = np.mean(g_first, axis=1, keepdims=True) #midpoint of observed points in first frame
 
     G_j = g_first - G_0
 
-    n_frames = np.shape(G)[0]
+    n_frames = len(G)
 
-    R_I = np.zeros([6, 3*n_frames]) #matrix [Rn | -I] for least squares problem
+    R_I = np.zeros([3*n_frames, 6]) #matrix [Rn | -I] for least squares problem
+
     p_lstsq = np.zeros([n_frames*3]) #matrix [pn] for least squares problem
 
     #set rotational side of matrix for least squares problem
     for k in range(n_frames):
-        R, p = reg.register(G[k], G_j)
+        R, p = reg.register(G[k][0].data, G_j)
         for i in range(0, 3):
             R_I[k*3][i] = R[0][i]
             R_I[k*3 + 1][i] = R[1][i]
@@ -35,7 +36,7 @@ def pivot(G):
     #solve as an Ax=B problem (R_I * [pcal ppiv] = p_leastsq)
     p_soln = np.linalg.lstsq(R_I, p_lstsq)
 
-    p_cal = np.array(p_soln[0][0:3])
-    p_piv = np.array(p_soln[0][3:6])
+    p_cal = np.array(p_soln[0][3:6])
+    p_piv = np.array(p_soln[0][0:3])
 
-    return p_cal, p_piv
+    return p_cal, -p_piv
