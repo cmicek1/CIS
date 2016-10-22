@@ -1,6 +1,7 @@
 import PA1_Prob4 as p4
 import PA1_Prob5 as p5
 import PA1_Prob6 as p6
+import test
 import os, sys
 
 
@@ -13,6 +14,14 @@ def main():
     calreadings = None
     empivot = None
     optpivot = None
+
+    if str(sys.argv[1]) == 'test':
+        tolerance = None
+        if len(sys.argv) == 3:
+            tolerance = float(sys.argv[2])
+        test.test_reg(tolerance)
+        sys.exit(0)
+
     for arg in sys.argv:
         if arg.split('.')[0].split('-')[-1] == 'calbody':
             calbody = arg
