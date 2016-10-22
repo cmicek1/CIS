@@ -1,6 +1,5 @@
 import scipy.linalg as scialg
 
-
 class Frame:
     """
     Class for representing a coordinate frame transformation.

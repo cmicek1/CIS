@@ -47,7 +47,7 @@ class PointCloud:
         correction[-1, -1] = scialg.det(v_t.dot(u))
 
         r = v_t.dot(correction.dot(u))
-
+        
         p = b_bar - r.dot(a_bar)
 
         return Frame.Frame(r, p)

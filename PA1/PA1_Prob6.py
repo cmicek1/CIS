@@ -24,7 +24,6 @@ def p_dimple(optpivot_file):
     for i in range(len(opt_frames)):
         opt_frames[i][1] = opt_frames[i][1].transform(f_d)
 
-
     p_cal, p_piv = piv.pivot(opt_frames, 1)
 
     print p_cal
