@@ -18,12 +18,12 @@ def pivot(G, nframe):
 
     #set rotational side of matrix for least squares problem
     for k in range(n_frames):
-        R, p = reg.register(G[k][nframe].data, G_j)
-        for i in range(0, 3):
-            R_I[k*3][i] = R[0][i]
-            R_I[k*3 + 1][i] = R[1][i]
-            R_I[k*3 + 2][i] = R[2][i]
-            p_lstsq[k*3 + i] = -p[i]
+     R, p = reg.register(G[k][nframe].data, G_j)
+     for i in range(0, 3):
+         R_I[k*3][i] = R[0][i]
+         R_I[k*3 + 1][i] = R[1][i]
+         R_I[k*3 + 2][i] = R[2][i]
+         p_lstsq[k*3 + i] = -p[i]
 
     #set identity side of matrix for least squares problem
     for n in range(n_frames):
