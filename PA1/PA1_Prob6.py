@@ -1,7 +1,8 @@
 import PointCloud as pc
+import pivot_cal as piv
+import frame_transformations as ft
 
-
-def c_expected(calbody_file, calreadings_file):
+def p_dimple(calbody_file, calreadings_file):
     """
     Computes expected EM marker positions on calibration object, given measured positions of markers on the object
     and data from each tracker.
@@ -20,11 +21,15 @@ def c_expected(calbody_file, calreadings_file):
 
     object_frame = pc.fromfile(calbody_file)
 
-    c_exp = []
-    for frame in tracker_frames:
-        f_d = object_frame[0][0].register(frame[0])
-        f_a = object_frame[0][1].register(frame[1])
+    f_d = object_frame[0][0].register(tracker_frames[0][0])
+    print f_d.r
+    print f_d.p
 
-        c_exp.append(object_frame[0][2].transform(f_d.inv.compose(f_a)))
+    for i in range(len(tracker_frames)):
+        tracker_frames[i][0] = tracker_frames[i][0].transform(f_d)
 
-    return c_exp
+    #TODO: fix transformation so output is correct
+
+    p_cal, p_piv = piv.pivot(tracker_frames)
+
+    return p_piv

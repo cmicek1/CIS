@@ -6,7 +6,6 @@ def pivot(G):
     #G is a list of point clouds, each with g points, representing different poses of the probe
 
     g_first = G[0][0].data
-    print g_first
 
     G_0 = np.mean(g_first, axis=1, keepdims=True) #midpoint of observed points in first frame
 
