@@ -17,4 +17,4 @@ def p_dimple(empivot_file):
 
     p_cal, p_piv = piv.pivot(g_clouds, 0)
 
-    return p_piv
+    return p_piv.round(2)
