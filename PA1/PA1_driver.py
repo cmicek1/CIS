@@ -1,7 +1,27 @@
 import PA1_Prob4 as p4
 import PA1_Prob5 as p5
 import PA1_Prob6 as p6
-import os
+import os, sys
+
+
+def main():
+    calbody = None
+    calreadings = None
+    empivot = None
+    optpivot = None
+    for arg in sys.argv:
+        if arg.split('.')[0].split('-')[-1] == 'calbody':
+            calbody = arg
+        if arg.split('.')[0].split('-')[-1] == 'calreadings':
+            calreadings = arg
+        if arg.split('.')[0].split('-')[-1] == 'empivot':
+            empivot = arg
+        if arg.split('.')[0].split('-')[-1] == 'optpivot':
+            optpivot = arg
+
+    outname = sys.argv[1].split('/')[-1].rsplit('-', 1)[0] + '-output1.txt'
+    tofile(outname, calbody, calreadings, empivot, optpivot)
+
 
 def tofile(outfile, calbody, calreadings, empivot, optpivot):
 
@@ -21,3 +41,7 @@ def tofile(outfile, calbody, calreadings, empivot, optpivot):
                                                    format(c_exp[i].data[1][k], '.2f'),
                                                    format(c_exp[i].data[2][k], '.2f')))
     f.close()
+
+
+if __name__ == '__main__':
+    main()
