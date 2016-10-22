@@ -1,5 +1,4 @@
 import numpy as np
-import registration as reg
 import PointCloud as pc
 
 def pivot(G, nframe):
@@ -19,7 +18,7 @@ def pivot(G, nframe):
 
     #set rotational side of matrix for least squares problem
     for k in range(n_frames):
-        F = reg.register(G[k][nframe], pc.PointCloud(G_j))
+        F = G[k][nframe].register(pc.PointCloud(G_j))
         R, p = F.r, F.p
         for i in range(0, 3):
             R_I[k*3][i] = R[0][i]
