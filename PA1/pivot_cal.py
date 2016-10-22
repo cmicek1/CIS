@@ -8,35 +8,35 @@ def pivot(G):
 
     #step one: use the first set of point clouds to define the mean frame to perform the transformation
 
-    print G
-
     g_first = G[0]
-
-    print g_first
 
     G_0 = np.mean(g_first, axis=1, keepdims=True) #midpoint of observed points in first frame
 
-    print G_0
-
     G_j = g_first - G_0
 
-    print G_j
+    n_frames = np.shape(G)[0]
 
-    R_I = np.zeros([6, 3*np.shape(G)[0]]) #matrix [Rn | -I] for least squares problem
-    p_lstsq = np.zeros([3, np.shape(G)[0]]) #matrix [pn] for least squares problem
+    R_I = np.zeros([6, 3*n_frames]) #matrix [Rn | -I] for least squares problem
+    p_lstsq = np.zeros([n_frames*3]) #matrix [pn] for least squares problem
 
     #set rotational side of matrix for least squares problem
+    for k in range(n_frames):
+        R, p = reg.register(G[k], G_j)
+        for i in range(0, 3):
+            R_I[k*3][i] = R[0][i]
+            R_I[k*3 + 1][i] = R[1][i]
+            R_I[k*3 + 2][i] = R[2][i]
+            p_lstsq[k*3 + i] = p[i]
 
     #set identity side of matrix for least squares problem
-    row_index = 0
+    for n in range(n_frames):
+        R_I[n*3][3] = -1
+        R_I[n*3 + 1][4] = -1
+        R_I[n*3 + 2][5] = -1
 
-    for n in range(np.shape(G)[0]):
-        R_I[row_index][3] = -1
-        R_I[row_index+1][4] = -1
-        R_I[row_index+2][5] = -1
-        row_index += 3
+    p_soln = np.linalg.lstsq(R_I, p_lstsq)
 
-    print R_I
+    p_cal = np.array(p_soln[0][0:3])
+    p_piv = np.array(p_soln[0][3:6])
 
-
-
+    return p_cal, p_piv
