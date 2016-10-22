@@ -6,10 +6,10 @@ import os, sys
 
 
 def main():
-    '''
+    """
     Main method, takes command line arguments for input files.
     :return: null
-    '''
+    """
     calbody = None
     calreadings = None
     empivot = None
