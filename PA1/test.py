@@ -2,7 +2,17 @@ import numpy as np
 import PointCloud as pc
 
 
-def test_reg(tolerance=None):
+def test_reg(tolerance=1e4):
+    """
+    Tests registration of a random point cloud using a random rotation and translation. If the difference between the
+    transformation components and the originals are withing tolerance, the registration is considered accurate and
+    the tests pass.
+
+    :param tolerance: The amount of allowed error between the generated and calculated transformation components
+    :type tolerance: float
+
+    :return: None
+    """
     print('Testing registration...')
     angles = np.random.uniform(0, 2 * np.pi, (3,))
     a = np.random.uniform(0, 10, (3, 10))
@@ -14,8 +24,7 @@ def test_reg(tolerance=None):
     p = np.random.uniform(0, 10, (3, 1))
     print('\np =')
     print(p)
-    if not tolerance:
-        tolerance = 1e-4
+
     print('\ntolerance = ' + str(tolerance))
     b = r.dot(a) + p
     print('\nb =')
@@ -43,6 +52,15 @@ def test_reg(tolerance=None):
 
 
 def _rotation(angles):
+    """
+    Helper method for generating a 3d rotation matrix
+
+    :param angles: The angles to rotate with respect to the x, y, and z axes
+    :type angles: numpy.array(numpy.float64) - shape (3, ) or (, 3) are acceptable
+
+    :return: A 3 x 3 rotation matrix
+    :rtype: numpy.array([numpy.float64][]) 3 x 3
+    """
     theta = angles[0]
     phi = angles[1]
     gamma = angles[2]
