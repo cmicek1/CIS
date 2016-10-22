@@ -1,6 +1,5 @@
 import numpy as np
 import registration as reg
-import PointCloud as pc
 
 def pivot(G, nframe):
     #G is a list of point clouds, each with g points, representing different poses of the probe
