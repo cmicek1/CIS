@@ -6,8 +6,6 @@ import registration as reg
 def pivot(G):
     #G is an array of arrays of points clouds, each with g points, representing different poses of the probe
 
-    #step one: use the first set of point clouds to define the mean frame to perform the transformation
-
     g_first = G[0]
 
     G_0 = np.mean(g_first, axis=1, keepdims=True) #midpoint of observed points in first frame
