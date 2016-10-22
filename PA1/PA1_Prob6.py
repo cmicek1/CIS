@@ -28,8 +28,6 @@ def p_dimple(calbody_file, calreadings_file):
     for i in range(len(tracker_frames)):
         tracker_frames[i][0] = tracker_frames[i][0].transform(f_d)
 
-    #TODO: fix transformation so output is correct
-
     p_cal, p_piv = piv.pivot(tracker_frames)
 
     return p_piv

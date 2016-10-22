@@ -27,4 +27,7 @@ def c_expected(calbody_file, calreadings_file):
 
         c_exp.append(object_frame[0][2].transform(f_d.inv.compose(f_a)))
 
+    for c in range(len(c_exp)):
+        print c_exp[c].data
+
     return c_exp

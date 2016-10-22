@@ -24,7 +24,7 @@ def pivot(G):
             R_I[k*3][i] = R[0][i]
             R_I[k*3 + 1][i] = R[1][i]
             R_I[k*3 + 2][i] = R[2][i]
-            p_lstsq[k*3 + i] = p[i]
+            p_lstsq[k*3 + i] = -p[i]
 
     #set identity side of matrix for least squares problem
     for n in range(n_frames):
@@ -38,4 +38,4 @@ def pivot(G):
     p_cal = np.array(p_soln[0][3:6])
     p_piv = np.array(p_soln[0][0:3])
 
-    return p_cal, -p_piv
+    return p_cal, p_piv
