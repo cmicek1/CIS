@@ -5,6 +5,10 @@ import os, sys
 
 
 def main():
+    '''
+    Main method, takes command line arguments for input files.
+    :return: null
+    '''
     calbody = None
     calreadings = None
     empivot = None
@@ -24,7 +28,15 @@ def main():
 
 
 def tofile(outfile, calbody, calreadings, empivot, optpivot):
-
+    '''
+    Runs methods for questions 4-6 and writes output file with solutions.
+    :param outfile: File name/path for output file
+    :param calbody: File name/path for the calibration object data file
+    :param calreadings: File name/path for the readings from the trackers
+    :param empivot: File name/path for EM pivot poses
+    :param optpivot: File name/path for optical pivot poses and calibration
+    :return: null
+    '''
     c_exp = p4.c_expected(calbody, calreadings)
     p_em = p5.p_dimple(empivot)
     p_opt = p6.p_dimple(optpivot, calbody)
