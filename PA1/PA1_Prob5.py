@@ -15,6 +15,6 @@ def p_dimple(empivot_file):
     """
     g_clouds = pc.fromfile(empivot_file)
 
-    p_cal, p_piv = piv.pivot(g_clouds)
+    p_cal, p_piv = piv.pivot(g_clouds, 0)
 
     return p_piv

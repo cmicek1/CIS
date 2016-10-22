@@ -1,1 +1,5 @@
-import scipy.linalg as scialg
+import pandas as pd
+
+
+def tofile(outfile, calbody, calreadings, empivot, ):
+    c_exp =
