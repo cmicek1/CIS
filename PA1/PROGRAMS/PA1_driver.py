@@ -19,10 +19,11 @@ def main():
 
     # Add 'test' command line option
     if str(sys.argv[1]) == 'test':
-        tolerance = None
         if len(sys.argv) == 3:
             tolerance = float(sys.argv[2])
-        test.test_reg(tolerance)
+            test.test_reg(tolerance)
+        else:
+            test.test_reg()
         sys.exit(0)
 
     # Parse arguments for regular execution
