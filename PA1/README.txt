@@ -25,5 +25,9 @@ the pin in tracker coordinates (performs pivot calibration of EM probe).
 
 PA1_Prob6.py: Performs pivot calibration in the EM tracker frame using optical tracker poses.
 
-PA1_driver.py: contains main method that parses command line input, as well as a method that runs the solutions for
-problems 4-6 and writes them to an output file in the correct format.
+PA1_driver.py: Executable- contains main method that parses command line input, as well as a method that runs the
+solutions for problems 4-6 and writes them to an output file in the correct format.
+
+PA1_driver.py is the executable for this assignment. Depending on the command line input, it can either run our testing
+method or generate an output file given a set of input data files. Detailed instructions for running this program
+are included in our report.
