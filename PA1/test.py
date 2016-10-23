@@ -1,4 +1,5 @@
 import numpy as np
+import scipy.linalg as scialg
 import PointCloud as pc
 
 
@@ -43,6 +44,10 @@ def test_reg(tolerance=1e4):
     print('\nIs calculated R within tolerance?')
     assert np.all(np.abs(r - f.r) <= tolerance)
     print(np.all(np.abs(r - f.r) <= tolerance))
+
+    print('\nIs it a rotation (det = 1)?')
+    assert np.abs(scialg.det(f.r) - scialg.det(r)) <= tolerance
+    print(np.abs(scialg.det(f.r) - scialg.det(r)) <= tolerance)
 
     print('\nIs calculated p within tolerance?')
     assert np.all(np.abs(p - f.p) <= tolerance)
