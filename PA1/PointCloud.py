@@ -76,13 +76,16 @@ def fromfile(fpath):
     :rtype: [PointCloud][]
     """
 
+    # Extract header row
     delims = pd.read_csv(fpath, header=None, nrows=1)
     name = delims.values[0, delims.shape[1] - 1].split('.')[0].split('-')[-1]
 
+    # Dictionary for storing whether or not a file has multiple frames of data
     nframes = {'calbody': 1, 'calreadings': delims.values[0, -2], 'empivot': delims.values[0, -2],
                'optpivot': delims.values[0, -2], 'output1': delims.values[0, -2], 'fiducials': 1, 'fiducialss': 1,
                'nav': delims.values[0, -2], 'output2': delims.values[0, -2]}
 
+    # Read in data
     dframe = pd.read_csv(fpath, header=None, names=['x', 'y', 'z'], skiprows=1)
 
     start = True
@@ -92,7 +95,7 @@ def fromfile(fpath):
     frame_length = None
 
     for frame in range(nframes[name]):
-        if start:
+        if start: # Store indices for different variables at start
             start = False
             inds = [0]
             if nframes[name] == 1:
@@ -104,12 +107,12 @@ def fromfile(fpath):
 
             frame_length = inds[-1]
 
-        clouds = []
+        clouds = []  # Store PointClouds for each variable
         for points in range(len(inds) - 1):
             clouds.append(PointCloud(
                 dframe.values[inds[points] + frame_length * frame:inds[points + 1] + frame_length * frame, :].T))
 
-        frame_clouds.append(clouds)
+        frame_clouds.append(clouds)  # Append list of clouds to list of clouds for all frames
 
     return frame_clouds
 
