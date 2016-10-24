@@ -26,3 +26,12 @@ def distCal(calbody_file, calreadings_file):
             q_max[k][i] = max(c[k].data[i])
             q_star_min[k][i] = min(c_exp[k].data[i])
             q_star_max[k][i] = max(c_exp[k].data[i])
+
+    u_star = np.zeros([nFrames, 3])
+    u = np.zeros([nFrames, 3])
+
+    for k in range(nFrames):
+        for i in range(0, 3):
+            u[k][i] = (c[k].data[i] - q_min[k][i])/(q_max[k][i] - q_min[k][i])
+            u_star[k][i] = (c_exp[k].data[i] - q_star_min[k][i]) / (q_star_max[k][i] - q_star_min[k][i])
+
