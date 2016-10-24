@@ -2,6 +2,8 @@ import PointCloud as pc
 import Frame as fr
 import PA2_Prob1 as p1
 import numpy as np
+import scipy.misc as spmisc
+import math
 
 def distCal(calbody_file, calreadings_file):
 
@@ -30,8 +32,6 @@ def distCal(calbody_file, calreadings_file):
     u_star = np.zeros([nFrames, 3])
     u = np.zeros([nFrames, 3])
 
-    for k in range(nFrames):
-        for i in range(0, 3):
-            u[k][i] = (c[k].data[i] - q_min[k][i])/(q_max[k][i] - q_min[k][i])
-            u_star[k][i] = (c_exp[k].data[i] - q_star_min[k][i]) / (q_star_max[k][i] - q_star_min[k][i])
-
+def bernstein(N, k, u):
+    B = spmisc.comb(N, k, exact=True) * math.pow(1 - u, N - k) * math.pow(u, k)
+    return B
