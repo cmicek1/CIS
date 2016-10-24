@@ -29,5 +29,13 @@ PA1_driver.py: Executable- contains main method that parses command line input, 
 solutions for problems 4-6 and writes them to an output file in the correct format.
 
 PA1_driver.py is the executable for this assignment. Depending on the command line input, it can either run our testing
-method or generate an output file given a set of input data files. Detailed instructions for running this program
-are included in our report.
+method or generate an output file given a set of input data files.
+
+Run configurations:
+To test:
+python PA1_driver.py test tolerance(optional)
+
+To evaluate input:
+python PA1_driver.py “xx-calbody.txt” “xx-calreadings.txt” “xx-empivot.txt” “xx-optpivot.txt”
+
+Detailed instructions for running this program are included in our report.
