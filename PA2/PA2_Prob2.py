@@ -3,6 +3,7 @@ import Frame as fr
 import PA2_Prob1 as p1
 import numpy as np
 import scipy.misc as spmisc
+import scipy.linalg as scialg
 import math
 
 def distCal(calbody_file, calreadings_file):
@@ -29,14 +30,26 @@ def distCal(calbody_file, calreadings_file):
 
     F_mat = f_matrix(u_s, 5)
 
-    #at this point want F_mat * Coeff mat (216 by 3) = u_s_star
+    #at this point want F_mat * Coeff mat = u_s_star
+    #i don't know how to do this but i'm gonna try with svd
+
+   # H = F_mat.T.dot(u_s_star)
+
+    #u, s, v_t = scialg.svd(H)
+
+    #u = u.T
+    #v_t = v_t.T
+
+    #correction = np.identity(v_t.shape[1])
+    #correction[-1, -1] = scialg.det(v_t.dot(u))
+
+    #coeffMat = v_t.dot(correction.dot(u))
+
+    #print coeff_mat
 
 def calc_q(c, c_exp):
 
-    q_min = np.zeros(3)
-    q_max = np.zeros(3)
-    q_star_min = np.zeros(3)
-    q_star_max = np.zeros(3)
+    q_min = q_max = q_star_min = q_star_max = np.zeros(3)
 
     for i in range(0, 3):
         q_min[i] = min(c[0].data[i])
@@ -57,21 +70,18 @@ def f_ijk(N, i, j, k, u_x, u_y, u_z):
 
 
 def f_matrix(u, deg):
-    #deg is degree of berenstein polynomial, u is normalized data
+    #deg is degree of berenstein polynomial, u is normalized distorted data
 
     nPoints = np.shape(u)[0]
 
-    F = np.zeros([nPoints, math.pow(deg + 1, 3)])
+    f_mat = np.zeros([nPoints, math.pow(deg + 1, 3)])
 
     for n in range(nPoints):
         c = 0
         for i in range(0, deg + 1):
             for j in range(0, deg + 1):
                 for k in range(0, deg + 1):
-                    F[n][c] = f_ijk(deg, i, j, k, u[n][0], u[n][1], u[n][2])
+                    f_mat[n][c] = f_ijk(deg, i, j, k, u[n][0], u[n][1], u[n][2])
                     c += 1
 
-    print F
-    print np.shape(u)
-    print np.shape(F)
-    return F
+    return f_mat
