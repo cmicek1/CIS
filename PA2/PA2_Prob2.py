@@ -31,23 +31,26 @@ def distcal(calbody_file, calreadings_file):
 
     F_mat = f_matrix(u_s, 5)
 
+    print np.shape(F_mat)
+
     coeffMat = solve_fcu(F_mat, u_s_star)
 
 
 def solve_fcu(F, U):
+
     C = np.zeros([np.shape(F)[1], 3])
-    print np.shape(C)
-    C = np.linalg.lstsq(F, U)
-    print C
-    return C[1]
+
+    C[:,0] = np.linalg.lstsq(F, U[:,0])
+
+    return C
 
 
 def calc_q(c, c_exp):
 
     q_min = np.zeros(3)
-    q_max = np.copy(q_min)
-    q_star_min = np.copy(q_min)
-    q_star_max = np.copy(q_min)
+    q_max = np.zeros(3)
+    q_star_min = np.zeros(3)
+    q_star_max = np.zeros(3)
 
     for i in range(0, 3):
         q_min[i] = min(c[0].data[i])
