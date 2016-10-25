@@ -2,11 +2,12 @@ import PointCloud as pc
 import Frame as fr
 import PA2_Prob1 as p1
 import numpy as np
+import numpy.linalg
 import scipy.misc as spmisc
-import scipy.linalg as scialg
 import math
 
-def distCal(calbody_file, calreadings_file):
+
+def distcal(calbody_file, calreadings_file):
 
     tracker_frames = pc.fromfile(calreadings_file)
 
@@ -30,22 +31,16 @@ def distCal(calbody_file, calreadings_file):
 
     F_mat = f_matrix(u_s, 5)
 
-    #at this point want F_mat * Coeff mat = u_s_star
-    #i don't know how to do this but i'm gonna try with svd
+    coeffMat = solve_fcu(F_mat, u_s_star)
 
-   # H = F_mat.T.dot(u_s_star)
 
-    #u, s, v_t = scialg.svd(H)
+def solve_fcu(F, U):
+    C = np.zeros([np.shape(F)[1], 3])
+    print np.shape(C)
+    C[:,0] = n.linalg.lstsq(F, U[:,0])
+    print C
+    return C
 
-    #u = u.T
-    #v_t = v_t.T
-
-    #correction = np.identity(v_t.shape[1])
-    #correction[-1, -1] = scialg.det(v_t.dot(u))
-
-    #coeffMat = v_t.dot(correction.dot(u))
-
-    #print coeff_mat
 
 def calc_q(c, c_exp):
 
