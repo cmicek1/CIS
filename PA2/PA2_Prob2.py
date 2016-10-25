@@ -37,14 +37,17 @@ def distcal(calbody_file, calreadings_file):
 def solve_fcu(F, U):
     C = np.zeros([np.shape(F)[1], 3])
     print np.shape(C)
-    C[:,0] = np.linalg.lstsq(F, U[:,0])
+    C = np.linalg.lstsq(F, U)
     print C
-    return C
+    return C[1]
 
 
 def calc_q(c, c_exp):
 
-    q_min = q_max = q_star_min = q_star_max = np.zeros(3)
+    q_min = np.zeros(3)
+    q_max = np.copy(q_min)
+    q_star_min = np.copy(q_min)
+    q_star_max = np.copy(q_min)
 
     for i in range(0, 3):
         q_min[i] = min(c[0].data[i])
