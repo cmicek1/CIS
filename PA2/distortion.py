@@ -2,9 +2,9 @@ import PointCloud as pc
 import pivot_cal as piv
 import PA2_Prob1 as p1
 import numpy as np
-import numpy.linalg
 import scipy.misc as spmisc
 import math
+import Frame as fr
 
 
 def distcal(calbody_file, calreadings_file):
@@ -37,6 +37,10 @@ def distcal(calbody_file, calreadings_file):
 
     print pivcal[1]
 
+
+def registrationframe(fiducial_file):
+
+    #registration for problem 5 from tracker frame (C from pivot calibration??) to CT frame
 
 def correctdistortion(coeffMat, c, c_exp):
 
