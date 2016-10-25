@@ -15,23 +15,63 @@ def distCal(calbody_file, calreadings_file):
 
     c_exp = p1.c_expected(calbody_file, calreadings_file)
 
-    nFrames = len(c)
+    pPerFrame = np.shape(c[0].data)[1]    #points per frame
 
-    q_min = np.zeros([nFrames, 3])
-    q_max = np.zeros([nFrames, 3])
-    q_star_min = np.zeros([nFrames, 3])
-    q_star_max = np.zeros([nFrames, 3])
+    q_min, q_max, q_star_min, q_star_max = calc_q(c, c_exp)
 
-    for k in range(nFrames):
+    u_s_star = np.zeros([pPerFrame, 3])
+    u_s = np.zeros([pPerFrame, 3])
+
+    for k in range(pPerFrame):
         for i in range(0, 3):
-            q_min[k][i] = min(c[k].data[i])
-            q_max[k][i] = max(c[k].data[i])
-            q_star_min[k][i] = min(c_exp[k].data[i])
-            q_star_max[k][i] = max(c_exp[k].data[i])
+            u_s_star[k][i] = (c[0].data[i][k] - q_min[i])/(q_max[i] - q_min[i])
+            u_s[k][i] = (c_exp[0].data[i][k] - q_star_min[i]) / (q_star_max[i] - q_star_min[i])
 
-    u_star = np.zeros([nFrames, 3])
-    u = np.zeros([nFrames, 3])
+    F_mat = f_matrix(u_s, 5)
+
+    #at this point want F_mat * Coeff mat (216 by 3) = u_s_star
+
+def calc_q(c, c_exp):
+
+    q_min = np.zeros(3)
+    q_max = np.zeros(3)
+    q_star_min = np.zeros(3)
+    q_star_max = np.zeros(3)
+
+    for i in range(0, 3):
+        q_min[i] = min(c[0].data[i])
+        q_max[i] = max(c[0].data[i])
+        q_star_min[i] = min(c_exp[0].data[i])
+        q_star_max[i] = max(c_exp[0].data[i])
+
+    return q_min, q_max, q_star_min, q_star_max
+
 
 def bernstein(N, k, u):
     B = spmisc.comb(N, k, exact=True) * math.pow(1 - u, N - k) * math.pow(u, k)
     return B
+
+
+def f_ijk(N, i, j, k, u_x, u_y, u_z):
+    return bernstein(N, i, u_x) * bernstein(N, j, u_y) * bernstein(N, k, u_z)
+
+
+def f_matrix(u, deg):
+    #deg is degree of berenstein polynomial, u is normalized data
+
+    nPoints = np.shape(u)[0]
+
+    F = np.zeros([nPoints, math.pow(deg + 1, 3)])
+
+    for n in range(nPoints):
+        c = 0
+        for i in range(0, deg + 1):
+            for j in range(0, deg + 1):
+                for k in range(0, deg + 1):
+                    F[n][c] = f_ijk(deg, i, j, k, u[n][0], u[n][1], u[n][2])
+                    c += 1
+
+    print F
+    print np.shape(u)
+    print np.shape(F)
+    return F
