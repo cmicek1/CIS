@@ -38,36 +38,41 @@ def distcal(calbody_file, calreadings_file):
    # print pivcal
 
 
-def correctdistortion(coeffMat, q, q_min, q_max):
-    'corrects distortion in a single vector given a given coefficient matrix, normalization constants qmin and qmax'
-    u = normalize_vector(q, q_min, q_max)
-    s = 0
+def correct(inputs, coeffs, q_min, q_max, q_star_min, q_star_max):
+    for i in range(len(inputs)):
 
-    for i in range(0, 6):
-        for j in range(0, 6):
-            for k in range(0, 6):
-                #s += coeffMat[ * f_ijk(6, i, j, k, u[0], u[1], u[2])
-        #TODO: this should be the function from the last page of the interpolation slides
 
-    print s
 
-#code below tries to correct distortion in an entire set of point clouds but i'm pretty sure it doesn't work ...
-#    pPerFrame = np.shape(c[0].data)[1]  # points per frame
-#    nFrames = np.shape(c)[0]
-
-#    U =[]
-
-#    for p in range(nFrames):
-#        U.append([c[p]])
-
-#    for k in range(nFrames):
-#        q_min, q_max, q_star_min, q_star_max = calc_q(c, c_exp, k)
-#        U[k][0].data = np.array((f_matrix(normalize(pPerFrame, c, k, q_min, q_max), 5).dot(coeffMat)))
-#        for i in range(pPerFrame):
-#            U[k][0].data[i] = U[k][0].data[i].dot(q_star_max - q_star_min) + q_star_min
-#        U[k][0].data = U[k][0].data.T
-
-#    return U
+# def correctdistortion(coeffMat, q, q_min, q_max):
+#     'corrects distortion in a single vector given a given coefficient matrix, normalization constants qmin and qmax'
+#     u = normalize_vector(q, q_min, q_max)
+#     s = 0
+#
+#     for i in range(0, 6):
+#         for j in range(0, 6):
+#             for k in range(0, 6):
+#                 #s += coeffMat[ * f_ijk(6, i, j, k, u[0], u[1], u[2])
+#         #TODO: this should be the function from the last page of the interpolation slides
+#
+#     print s
+#
+# #code below tries to correct distortion in an entire set of point clouds but i'm pretty sure it doesn't work ...
+# #    pPerFrame = np.shape(c[0].data)[1]  # points per frame
+# #    nFrames = np.shape(c)[0]
+#
+# #    U =[]
+#
+# #    for p in range(nFrames):
+# #        U.append([c[p]])
+#
+# #    for k in range(nFrames):
+# #        q_min, q_max, q_star_min, q_star_max = calc_q(c, c_exp, k)
+# #        U[k][0].data = np.array((f_matrix(normalize(pPerFrame, c, k, q_min, q_max), 5).dot(coeffMat)))
+# #        for i in range(pPerFrame):
+# #            U[k][0].data[i] = U[k][0].data[i].dot(q_star_max - q_star_min) + q_star_min
+# #        U[k][0].data = U[k][0].data.T
+#
+# #    return U
 
 
 def normalize(pPerFrame, c, frame, q_min, q_max):
@@ -80,11 +85,13 @@ def normalize(pPerFrame, c, frame, q_min, q_max):
 
     return u_s
 
+
 def normalize_vector(c, q_min, q_max):
 
     u_s = (c - q_min)/(q_min - q_max)
 
     return u_s
+
 
 def solve_fcu(F, U):
 
