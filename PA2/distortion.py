@@ -20,9 +20,6 @@ def distcal(calbody_file, calreadings_file):
     pPerFrame = np.shape(c[0].data)[1]    #points per frame
     nFrames = np.shape(c)[0]
 
-    print pPerFrame
-    print nFrames
-
     q_min, q_max, q_star_min, q_star_max = calc_q(c, c_exp, 0)
     u_s_star = normalize(pPerFrame, c_exp, 0, q_star_min, q_star_max)
     u_s = normalize(pPerFrame, c, 0, q_min, q_max)
@@ -33,14 +30,10 @@ def distcal(calbody_file, calreadings_file):
 
     corrC = correctdistortion(coeff_mat, c, c_exp)
 
-    pivcal = piv.pivot(corrC)
+    pivcal = piv.pivot(corrC, 0)
 
-    print pivcal[1]
+    print pivcal
 
-
-def registrationframe(fiducial_file):
-
-    #registration for problem 5 from tracker frame (C from pivot calibration??) to CT frame
 
 def correctdistortion(coeffMat, c, c_exp):
 
@@ -50,21 +43,17 @@ def correctdistortion(coeffMat, c, c_exp):
     U =[]
 
     for p in range(nFrames):
-        U.append(pc.PointCloud(c[p].data))
+        U.append([c[p]])
 
     for k in range(nFrames):
         q_min, q_max, q_star_min, q_star_max = calc_q(c, c_exp, k)
-        U[k].data = (f_matrix(normalize(pPerFrame, c, k, q_min, q_max), 5).dot(coeffMat)).T
-        for p in range(pPerFrame):
-            for i in range(0, 3):
-                U[k].data[i][p] = (U[k].data[:,p].dot((q_star_max - q_star_min)) + q_star_min)[i]
+        U[k][0].data = np.array((f_matrix(normalize(pPerFrame, c, k, q_min, q_max), 5).dot(coeffMat)))
+        for i in range(pPerFrame):
+            U[k][0].data[i] = U[k][0].data[i].dot(q_star_max - q_star_min) + q_star_min
+        U[k][0].data = U[k][0].data.T
 
-    print U[0].data, "\n"
-    print c_exp[0].data, "\n"
-    print c[0].data, "\n"
-
+    print U
     return U
-    #print U
 
 
 def normalize(pPerFrame, c, frame, q_min, q_max):
@@ -79,8 +68,6 @@ def normalize(pPerFrame, c, frame, q_min, q_max):
 
 
 def solve_fcu(F, U):
-
-    C = np.zeros([np.shape(F)[1], 3])
 
     C = np.linalg.lstsq(F, U)
 

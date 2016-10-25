@@ -2,10 +2,10 @@ import numpy as np
 import PointCloud as pc
 
 
-def pivot(G):
+def pivot(G, nframe):
     # G is a list of point clouds, each with g points, representing different poses of the probe
 
-    g_first = G[0].data
+    g_first = G[0][nframe].data
 
     G_0 = np.mean(g_first, axis=1, keepdims=True)  # midpoint of observed points in first frame
 
@@ -19,7 +19,7 @@ def pivot(G):
 
     # set rotational side of matrix for least squares problem
     for k in range(n_frames):
-        F = G[k].register(pc.PointCloud(G_j))
+        F = G[k][nframe].register(pc.PointCloud(G_j))
         R, p = F.r, F.p
         for i in range(0, 3):
             R_I[k * 3][i] = R[0][i]
