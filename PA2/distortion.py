@@ -33,9 +33,9 @@ def distcal(calbody_file, calreadings_file):
 
     corrC = correctdistortion(coeff_mat, c, c_exp)
 
-    pivval = piv.pivotcal(corrC, 0)
+    pivcal = piv.pivot(corrC)
 
-    print pivval
+    print pivcal[1]
 
 
 def correctdistortion(coeffMat, c, c_exp):
