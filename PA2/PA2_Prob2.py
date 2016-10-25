@@ -37,7 +37,7 @@ def distcal(calbody_file, calreadings_file):
 def solve_fcu(F, U):
     C = np.zeros([np.shape(F)[1], 3])
     print np.shape(C)
-    C[:,0] = n.linalg.lstsq(F, U[:,0])
+    C[:,0] = np.linalg.lstsq(F, U[:,0])
     print C
     return C
 
