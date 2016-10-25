@@ -40,9 +40,9 @@ def solve_fcu(F, U):
 
     C = np.zeros([np.shape(F)[1], 3])
 
-    C[:,0] = np.linalg.lstsq(F, U[:,0])
+    C= np.linalg.lstsq(F, U)
 
-    return C
+    return C[1]
 
 
 def calc_q(c, c_exp):
