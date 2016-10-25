@@ -38,15 +38,26 @@ def distcal(calbody_file, calreadings_file):
 
 def correctdistortion(coeffMat, c, c_exp):
 
-    U = []
     pPerFrame = np.shape(c[0].data)[1]  # points per frame
     nFrames = np.shape(c)[0]
+    print c[0].data
+
+    U =[]
+
+    for p in range(nFrames):
+        U.append(pc.PointCloud(c[p].data))
 
     for k in range(nFrames):
-        q_min, q_max, q_star_min, q_star_max = calc_q(c, c_exp, 0)
-        U.append(f_matrix(normalize(pPerFrame, c, k, q_min, q_max), 5).dot(coeffMat))
+        q_min, q_max, q_star_min, q_star_max = calc_q(c, c_exp, k)
+        U[k].data = (f_matrix(normalize(pPerFrame, c, k, q_min, q_max), 5).dot(coeffMat)).T
+        for p in range(pPerFrame):
+            for i in range(0, 3):
+                U[k].data[i][p] = (U[k].data[:,p].dot((q_star_max - q_star_min)) + q_star_min)[i]
 
-    print U
+    print U[0].data, "\n"
+    print c_exp[0].data, "\n"
+    print c[0].data, "\n"
+    #print U
 
 
 def normalize(pPerFrame, c, frame, q_min, q_max):
