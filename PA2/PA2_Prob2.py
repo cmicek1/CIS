@@ -31,16 +31,17 @@ def distcal(calbody_file, calreadings_file):
 
     F_mat = f_matrix(u_s, 5)
 
-    print F_mat
-    print u_s_star
+    print np.shape(F_mat)
 
     coeffMat = solve_fcu(F_mat, u_s_star)
 
 
 def solve_fcu(F, U):
 
-    C = np.linalg.lstsq(F, U)
-    print C
+    C = np.zeros([np.shape(F)[1], 3])
+
+    C[:,0] = np.linalg.lstsq(F, U[:,0])
+
     return C
 
 
