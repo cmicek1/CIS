@@ -29,19 +29,24 @@ def distcal(calbody_file, calreadings_file):
 
     F_mat = f_matrix(u_s, 5)
 
-    coeffMat = solve_fcu(F_mat, u_s_star)
+    coeff_mat = solve_fcu(F_mat, u_s_star)
 
-    print coeffMat
+   # print coeffMat
+
+    correctdistortion(coeff_mat, c, c_exp)
 
 
 def correctdistortion(coeffMat, c, c_exp):
-    w = []
+
+    U = []
     pPerFrame = np.shape(c[0].data)[1]  # points per frame
     nFrames = np.shape(c)[0]
 
     for k in range(nFrames):
         q_min, q_max, q_star_min, q_star_max = calc_q(c, c_exp, 0)
-        f = f_matrix(normalize(pPerFrame, c, k, q_min, q_max))
+        U.append(f_matrix(normalize(pPerFrame, c, k, q_min, q_max), 5).dot(coeffMat))
+
+    print U
 
 
 def normalize(pPerFrame, c, frame, q_min, q_max):
