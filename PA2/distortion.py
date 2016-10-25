@@ -1,5 +1,5 @@
 import PointCloud as pc
-import Frame as fr
+import pivot_cal as piv
 import PA2_Prob1 as p1
 import numpy as np
 import numpy.linalg
@@ -31,16 +31,17 @@ def distcal(calbody_file, calreadings_file):
 
     coeff_mat = solve_fcu(F_mat, u_s_star)
 
-   # print coeffMat
+    corrC = correctdistortion(coeff_mat, c, c_exp)
 
-    correctdistortion(coeff_mat, c, c_exp)
+    pivval = piv.pivotcal(corrC, 0)
+
+    print pivval
 
 
 def correctdistortion(coeffMat, c, c_exp):
 
     pPerFrame = np.shape(c[0].data)[1]  # points per frame
     nFrames = np.shape(c)[0]
-    print c[0].data
 
     U =[]
 
@@ -57,6 +58,8 @@ def correctdistortion(coeffMat, c, c_exp):
     print U[0].data, "\n"
     print c_exp[0].data, "\n"
     print c[0].data, "\n"
+
+    return U
     #print U
 
 
