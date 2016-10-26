@@ -40,9 +40,6 @@ def tip_in_EM(emfiducialss, ptip, coeffs, q_min, q_max, q_star_min, q_star_max):
     for frame in G:
         F = frame[0].register(pc.PointCloud(G_j))
         C = pc.PointCloud(ptip.reshape((3, 1))).transform(F)
-        if Cs.data is None:
-            Cs.data = C.data
-        else:
-            Cs = Cs.add(C)
+        Cs = Cs.add(C)
 
     return Cs

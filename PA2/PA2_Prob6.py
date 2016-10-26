@@ -39,9 +39,6 @@ def tip_in_CT(emnav, ptip, F_reg, coeffs, q_min, q_max, q_star_min, q_star_max):
     for frame in G:
         F = frame[0].register(pc.PointCloud(G_j))
         C = pc.PointCloud(ptip.reshape((3, 1))).transform(F).transform(F_reg)
-        if CTs.data is None:
-            CTs.data = C.data
-        else:
-            CTs = CTs.add(C)
+        CTs = CTs.add(C)
 
     return CTs

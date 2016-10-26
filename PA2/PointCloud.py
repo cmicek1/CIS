@@ -73,7 +73,12 @@ class PointCloud:
         :return: The union of the two PointClouds, with the data from b after the data of the original
         :rtype: PointCloud
         """
-        return PointCloud(np.concatenate((self.data, b.data), axis=1))
+        a = PointCloud()
+        if self.data is None:
+            a.data = b.data
+        else:
+            a = PointCloud(np.concatenate((self.data, b.data), axis=1))
+        return a
 
 
 def fromfile(fpath):
