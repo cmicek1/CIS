@@ -1,6 +1,7 @@
 import PA2_Prob4 as p4
 import distortion as d
 import PA2_Prob5 as p5
+import PA2_Prob6 as p6
 import Frame as fr
 
 #TODO: @chris this is just to automate running for the console but this isn't actually the driver
