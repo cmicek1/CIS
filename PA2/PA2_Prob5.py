@@ -1,33 +1,22 @@
-import distortion as d
+import PointCloud as pc
 
 
-def find_freg(ctfiducials, Cs, coeffs, q_min, q_max, q_star_min, q_star_max):
+def find_freg(ctfiducials, Cs):
     """
     Returns the transformation from tracker coordinates to CT coordinates.
 
-    :param ctfiducials: The file name/path of the file with marker positions when the pointer is on the fiducials,
-                        relative to the CT frame.
-    :param ptip: The coordinates of the tip of the pointer relative to the pointer coordinate system (Output of
-                 pivot_cal.pivot)
-    :param coeffs: Coefficient matrix for dewarping (Output of distortion.distcal)
-    :param q_min: Vector of input minima for the initial correction matrix creation (Output of distortion.distcal)
-    :param q_max: Vector of input maxima for the initial correction matrix creation (Output of distortion.distcal)
-    :param q_star_min: Vector of output minima for the initial correction matrix creation (Output of distortion.distcal)
-    :param q_star_max: Vector of output maxima for the initial correction matrix creation (Output of distortion.distcal)
+    :param ctfiducials: The file name/path of the file with positions of each fiducial pin in the CT frame
+    :param Cs: A PointCloud of computed positions for the pointer tip relative to the EM tracker frame for each frame of
+               data
 
     :type ctfiducials: str
-    :type ptip: numpy.array(numpy.float64) shape (3,) or (, 3)
-    :type coeffs: numpy.array([numpy.float64][]) degree**3 x 3
-    :type q_min: numpy.array(numpy.float64) shape (3,) or (, 3)
-    :type q_max: numpy.array(numpy.float64) shape (3,) or (, 3)
-    :type q_star_min: numpy.array(numpy.float64) shape (3,) or (, 3)
-    :type q_star_max: numpy.array(numpy.float64) shape (3,) or (, 3)
+    :type Cs: PointCloud.PointCloud
 
-    :return: A list of arrays, where each array is the position of the pointer tip in EM tracker coordinates for each
-             frame
+    :return: The frame transformation from tracker to CT coordinates
+    :rtype: Frame.Frame
     """
 
-    b = d.correct(ctfiducials, coeffs, q_min, q_max, q_star_min, q_star_max)
+    b = pc.fromfile(ctfiducials)
     f_reg = Cs.register(b[0][0])
 
     return f_reg
