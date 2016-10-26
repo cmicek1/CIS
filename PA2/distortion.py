@@ -11,9 +11,6 @@ def distcal(calbody_file, calreadings_file, empivot_file):
 
     tracker_frames = pc.fromfile(calreadings_file)
 
-    print len(tracker_frames)
-    print np.shape(tracker_frames[0][2].data)
-
     c = []
     for k in range(len(tracker_frames)):
         c.append(tracker_frames[k][2])
@@ -29,17 +26,13 @@ def distcal(calbody_file, calreadings_file, empivot_file):
         concatc = np.concatenate((concatc, c[i].data), axis=1)
         concatc_exp = np.concatenate((concatc_exp, c_exp[i].data), axis=1)
 
-    print concatc
-
     q_min, q_max, q_star_min, q_star_max = calc_q(concatc, concatc_exp, 0)
-    print q_min, q_max, q_star_min, q_star_max
-    u_s_star = normalize(pPerFrame, concatc_exp, 0, q_star_min, q_star_max)
-    u_s = normalize(pPerFrame, concatc, 0, q_min, q_max)
+    u_s_star = normalize(pPerFrame*nFrames, concatc_exp, 0, q_star_min, q_star_max)
+    u_s = normalize(pPerFrame*nFrames, concatc, 0, q_min, q_max)
 
     F_mat = f_matrix(u_s, 5)
 
     coeff_mat = solve_fcu(F_mat, u_s_star)
-    print np.shape(coeff_mat)
 
     EMcorrect = correct(empivot_file, coeff_mat, q_min, q_max, q_star_min, q_star_max)
 
@@ -48,6 +41,8 @@ def correct(inputs, coeffs, q_min, q_max, q_star_min, q_star_max):
 
     inputcloud = pc.fromfile(inputs)
     print inputcloud
+
+
 
 
 
@@ -80,7 +75,7 @@ def normalize(pPerFrame, c, frame, q_min, q_max):
 
     for k in range(pPerFrame):
         for i in range(0, 3):
-            u_s[k][i] = (c[frame].data[i][k] - q_min[i])/(q_max[i] - q_min[i])
+            u_s[k][i] = (c[i][k] - q_min[i])/(q_max[i] - q_min[i])
 
     return u_s
 
@@ -107,10 +102,10 @@ def calc_q(c, c_exp, frame):
     q_star_max = np.zeros(3)
 
     for i in range(0, 3):
-        q_min[i] = min(c[frame].data[i])
-        q_max[i] = max(c[frame].data[i])
-        q_star_min[i] = min(c_exp[frame].data[i])
-        q_star_max[i] = max(c_exp[frame].data[i])
+        q_min[i] = min(c[i])
+        q_max[i] = max(c[i])
+        q_star_min[i] = min(c_exp[i])
+        q_star_max[i] = max(c_exp[i])
 
     return q_min, q_max, q_star_min, q_star_max
 
