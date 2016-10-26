@@ -57,27 +57,6 @@ def correct(inputs, coeffs, q_min, q_max, q_star_min, q_star_max):
 
     return outputcloud
 
-# def correctdistortion(coeffMat, q, q_min, q_max):
-
-#
-# #code below tries to correct distortion in an entire set of point clouds but i'm pretty sure it doesn't work ...
-# #    pPerFrame = np.shape(c[0].data)[1]  # points per frame
-# #    nFrames = np.shape(c)[0]
-#
-# #    U =[]
-#
-# #    for p in range(nFrames):
-# #        U.append([c[p]])
-#
-# #    for k in range(nFrames):
-# #        q_min, q_max, q_star_min, q_star_max = calc_q(c, c_exp, k)
-# #        U[k][0].data = np.array((f_matrix(normalize(pPerFrame, c, k, q_min, q_max), 5).dot(coeffMat)))
-# #        for i in range(pPerFrame):
-# #            U[k][0].data[i] = U[k][0].data[i].dot(q_star_max - q_star_min) + q_star_min
-# #        U[k][0].data = U[k][0].data.T
-#
-# #    return U
-
 
 def normalize(pPerFrame, c, frame, q_min, q_max):
 
