@@ -7,9 +7,13 @@ import math
 import Frame as fr
 
 
-def distcal(calbody_file, calreadings_file):
+def distcal(calbody_file, calreadings_file, empivot_file):
 
     tracker_frames = pc.fromfile(calreadings_file)
+
+    print len(tracker_frames)
+    print np.shape(tracker_frames[0][2].data)
+    #TODO: add things to concatanate all frames of C together to calculate the stuff
 
     c = []
     for k in range(len(tracker_frames)):
@@ -29,32 +33,20 @@ def distcal(calbody_file, calreadings_file):
     coeff_mat = solve_fcu(F_mat, u_s_star)
 
     print coeff_mat
-    return coeff_mat
 
-   # corrC = correctdistortion(coeff_mat, c, c_exp)
-
-   # pivcal = piv.pivot(corrC, 0)
-
-   # print pivcal
+    EMcorrect = correct(empivot_file, coeff_mat, q_min, q_max, q_star_min, q_star_max)
 
 
 def correct(inputs, coeffs, q_min, q_max, q_star_min, q_star_max):
-    for i in range(len(inputs)):
+
+    inputcloud = pc.fromfile(inputs)
+    print inputcloud
+
 
 
 
 # def correctdistortion(coeffMat, q, q_min, q_max):
-#     'corrects distortion in a single vector given a given coefficient matrix, normalization constants qmin and qmax'
-#     u = normalize_vector(q, q_min, q_max)
-#     s = 0
-#
-#     for i in range(0, 6):
-#         for j in range(0, 6):
-#             for k in range(0, 6):
-#                 #s += coeffMat[ * f_ijk(6, i, j, k, u[0], u[1], u[2])
-#         #TODO: this should be the function from the last page of the interpolation slides
-#
-#     print s
+
 #
 # #code below tries to correct distortion in an entire set of point clouds but i'm pretty sure it doesn't work ...
 # #    pPerFrame = np.shape(c[0].data)[1]  # points per frame
