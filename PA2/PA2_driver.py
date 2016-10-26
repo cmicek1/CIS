@@ -83,10 +83,9 @@ def tofile(outfile, calbody, calreadings, empivot, ctfiducials, emfiducialss, em
 
     f = open(outfile, 'w')
     h, t = os.path.split(outfile)
-
+    f.write('{0}, {1}\n'.format(CT.data.shape[1], t))
     for i in range(CT.data.shape[1]):
-        f.write('{0}, {1}\n'.format(CT.data.shape[1], t))
-        f.write('  {0},   {1},   {2}\n'.format(format(CT.data[0][i], '.2f'),
+        f.write('{0:>10},{1:>10},{2:>10}\n'.format(format(CT.data[0][i], '.2f'),
                                                format(CT.data[1][i], '.2f'),
                                                format(CT.data[2][i], '.2f')))
     f.close()
