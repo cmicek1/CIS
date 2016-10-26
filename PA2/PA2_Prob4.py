@@ -25,8 +25,9 @@ def tip_in_EM(emfiducialss, ptip, coeffs, q_min, q_max, q_star_min, q_star_max):
     :type q_star_min: numpy.array(numpy.float64) shape (3,) or (, 3)
     :type q_star_max: numpy.array(numpy.float64) shape (3,) or (, 3)
 
-    :return: A list of arrays, where each array is the position of the pointer tip in EM tracker coordinates for each
-             frame
+    :return: A PointCloud representing the location of the pointer tip in EM tracker coordinates at each set of
+             observations G
+    :rtype: PointCloud.PointCloud
     """
 
     G = d.correct(emfiducialss, coeffs, q_min, q_max, q_star_min, q_star_max)
