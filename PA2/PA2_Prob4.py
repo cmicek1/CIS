@@ -31,6 +31,7 @@ def tip_in_EM(emfiducialss, ptip, coeffs, q_min, q_max, q_star_min, q_star_max):
     """
 
     G = d.correct(emfiducialss, coeffs, q_min, q_max, q_star_min, q_star_max)
+
     G_0 = np.mean(G[0][0].data, axis=1, keepdims=True)
 
     G_j = G[0][0].data - G_0
@@ -41,6 +42,5 @@ def tip_in_EM(emfiducialss, ptip, coeffs, q_min, q_max, q_star_min, q_star_max):
         F = frame[0].register(pc.PointCloud(G_j))
         C = pc.PointCloud(ptip.reshape((3, 1))).transform(F)
         Cs = Cs.add(C)
-
 
     return Cs
