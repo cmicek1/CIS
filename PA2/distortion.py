@@ -4,7 +4,6 @@ import PA2_Prob1 as p1
 import numpy as np
 import scipy.misc as spmisc
 import math
-import Frame as fr
 
 
 def distcal(calbody_file, calreadings_file, empivot_file):
