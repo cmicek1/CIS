@@ -55,7 +55,7 @@ def correct(inputs, coeffs, q_min, q_max, q_star_min, q_star_max):
         outputcloud[k][0].data = f_matrix(normalize(points, inputcloud[k][0].data, q_min, q_max), 5).dot(coeffs)
         for i in range(points):
             for j in range(3):
-                outputcloud[k][0].data[i][j] = (outputcloud[k][0].data[i][j])*(q_star_max[j] - q_star_min[j]) + \
+                outputcloud[k][0].data[i, j] = (outputcloud[k][0].data[i, j])*(q_star_max[j] - q_star_min[j]) + \
                                                q_star_min[j]
 
         outputcloud[k][0].data = outputcloud[k][0].data.T
