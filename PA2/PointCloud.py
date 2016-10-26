@@ -64,6 +64,15 @@ class PointCloud:
         return PointCloud(f.r.dot(self.data) + f.p)
 
     def add(self, b):
+        """
+        Adds the data in the PointCloud b to the current PointCloud, and outputs their union.
+
+        :param b: The PointCloud to add
+        :type b: PointCloud
+
+        :return: The union of the two PointClouds, with the data from b after the data of the original
+        :rtype: PointCloud
+        """
         return PointCloud(np.concatenate((self.data, b.data), axis=1))
 
 

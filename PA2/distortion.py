@@ -38,7 +38,8 @@ def distcal(calbody_file, calreadings_file, empivot_file):
 
     pivotanswer = piv.pivot(EMcorrect, 0)
 
-    return pivotanswer
+    return pivotanswer, coeff_mat, q_min, q_max, q_star_min, q_star_max
+
 
 def correct(inputs, coeffs, q_min, q_max, q_star_min, q_star_max):
 
