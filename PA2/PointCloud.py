@@ -92,8 +92,8 @@ def fromfile(fpath):
     name = delims.values[0, delims.shape[1] - 1].split('.')[0].split('-')[-1]
 
     nframes = {'calbody': 1, 'calreadings': delims.values[0, -2], 'empivot': delims.values[0, -2],
-               'optpivot': delims.values[0, -2], 'output1': delims.values[0, -2], 'fiducials': 1, 'fiducialss': 1,
-               'nav': delims.values[0, -2], 'output2': delims.values[0, -2]}
+               'optpivot': delims.values[0, -2], 'output1': delims.values[0, -2], 'fiducials': 1,
+               'fiducialss': delims.values[0, -2], 'nav': delims.values[0, -2], 'output2': delims.values[0, -2]}
 
     dframe = pd.read_csv(fpath, header=None, names=['x', 'y', 'z'], skiprows=1)
 
