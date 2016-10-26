@@ -36,6 +36,9 @@ def distcal(calbody_file, calreadings_file, empivot_file):
 
     EMcorrect = correct(empivot_file, coeff_mat, q_min, q_max, q_star_min, q_star_max)
 
+    pivotanswer = piv.pivot(EMcorrect, 0)
+
+    return pivotanswer
 
 def correct(inputs, coeffs, q_min, q_max, q_star_min, q_star_max):
 
@@ -48,14 +51,13 @@ def correct(inputs, coeffs, q_min, q_max, q_star_min, q_star_max):
 
     points = np.shape(inputcloud[0][0].data)[1]
 
-    for k in range(points):
-        print normalize(points, inputcloud[k][0].data, k, q_min, q_max)
-        print (f_matrix(normalize(points, inputcloud[k][0].data, k, q_min, q_max), 5).dot(coeffs))
+    for k in range(len(inputcloud)):
+        outputcloud[k][0].data = f_matrix(normalize(points, inputcloud[k][0].data, k, q_min, q_max), 5).dot(coeffs)
         for i in range(points):
-           outputcloud[k][0].data = outputcloud[k][0].data[:, i].dot(q_star_max - q_star_min) + q_star_min
-           outputcloud[k][0].data = outputcloud[k][0].data.T
+            outputcloud[k][0].data[i] = (outputcloud[k][0].data[i]).dot(q_star_max - q_star_min) + q_star_min
 
-    print outputcloud
+        outputcloud[k][0].data = outputcloud[k][0].data.T
+
     return outputcloud
 
 
