@@ -13,7 +13,6 @@ def distcal(calbody_file, calreadings_file, empivot_file):
 
     print len(tracker_frames)
     print np.shape(tracker_frames[0][2].data)
-    #TODO: add things to concatanate all frames of C together to calculate the stuff
 
     c = []
     for k in range(len(tracker_frames)):
@@ -24,15 +23,23 @@ def distcal(calbody_file, calreadings_file, empivot_file):
     pPerFrame = np.shape(c[0].data)[1]    #points per frame
     nFrames = np.shape(c)[0]
 
-    q_min, q_max, q_star_min, q_star_max = calc_q(c, c_exp, 0)
-    u_s_star = normalize(pPerFrame, c_exp, 0, q_star_min, q_star_max)
-    u_s = normalize(pPerFrame, c, 0, q_min, q_max)
+    concatc = c[0].data
+    concatc_exp = c_exp[0].data
+    for i in range(1, nFrames):
+        concatc = np.concatenate((concatc, c[i].data), axis=1)
+        concatc_exp = np.concatenate((concatc_exp, c_exp[i].data), axis=1)
+
+    print concatc
+
+    q_min, q_max, q_star_min, q_star_max = calc_q(concatc, concatc_exp, 0)
+    print q_min, q_max, q_star_min, q_star_max
+    u_s_star = normalize(pPerFrame, concatc_exp, 0, q_star_min, q_star_max)
+    u_s = normalize(pPerFrame, concatc, 0, q_min, q_max)
 
     F_mat = f_matrix(u_s, 5)
 
     coeff_mat = solve_fcu(F_mat, u_s_star)
-
-    print coeff_mat
+    print np.shape(coeff_mat)
 
     EMcorrect = correct(empivot_file, coeff_mat, q_min, q_max, q_star_min, q_star_max)
 
