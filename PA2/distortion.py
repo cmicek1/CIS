@@ -26,9 +26,9 @@ def distcal(calbody_file, calreadings_file, empivot_file):
         concatc = np.concatenate((concatc, c[i].data), axis=1)
         concatc_exp = np.concatenate((concatc_exp, c_exp[i].data), axis=1)
 
-    q_min, q_max, q_star_min, q_star_max = calc_q(concatc, concatc_exp, 0)
-    u_s_star = normalize(pPerFrame*nFrames, concatc_exp, 0, q_star_min, q_star_max)
-    u_s = normalize(pPerFrame*nFrames, concatc, 0, q_min, q_max)
+    q_min, q_max, q_star_min, q_star_max = calc_q(concatc, concatc_exp)
+    u_s_star = normalize(pPerFrame*nFrames, concatc_exp, q_star_min, q_star_max)
+    u_s = normalize(pPerFrame*nFrames, concatc, q_min, q_max)
 
     F_mat = f_matrix(u_s, 5)
 
@@ -52,16 +52,18 @@ def correct(inputs, coeffs, q_min, q_max, q_star_min, q_star_max):
     points = np.shape(inputcloud[0][0].data)[1]
 
     for k in range(len(inputcloud)):
-        outputcloud[k][0].data = f_matrix(normalize(points, inputcloud[k][0].data, k, q_min, q_max), 5).dot(coeffs)
+        outputcloud[k][0].data = f_matrix(normalize(points, inputcloud[k][0].data, q_min, q_max), 5).dot(coeffs)
         for i in range(points):
-            outputcloud[k][0].data[i] = (outputcloud[k][0].data[i]).dot(q_star_max - q_star_min) + q_star_min
+            for j in range(3):
+                outputcloud[k][0].data[i][j] = (outputcloud[k][0].data[i][j])*(q_star_max[j] - q_star_min[j]) + \
+                                               q_star_min[j]
 
         outputcloud[k][0].data = outputcloud[k][0].data.T
 
     return outputcloud
 
 
-def normalize(pPerFrame, c, frame, q_min, q_max):
+def normalize(pPerFrame, c, q_min, q_max):
 
     u_s = np.zeros([pPerFrame, 3])
 
@@ -86,7 +88,7 @@ def solve_fcu(F, U):
     return C[0]
 
 
-def calc_q(c, c_exp, frame):
+def calc_q(c, c_exp):
 
     q_min = np.zeros(3)
     q_max = np.zeros(3)

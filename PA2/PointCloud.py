@@ -64,7 +64,7 @@ class PointCloud:
         return PointCloud(f.r.dot(self.data) + f.p)
 
     def add(self, b):
-        return PointCloud(np.concatenate((self.data, b.data), axis=0))
+        return PointCloud(np.concatenate((self.data, b.data), axis=1))
 
 
 def fromfile(fpath):
