@@ -10,10 +10,10 @@ def runprogram(calbody, calreadings, empivot, emfiducials, ctfiducials, emnav):
 
     pans, C, qmi, qma, qmis, qmas = d.distcal(calbody, calreadings, empivot)
 
-    Cs = p4.tip_in_EM(emfiducials, pans[1], C, qmi, qma, qmis, qmas)
+    Cs = p4.tip_in_EM(empivot, emfiducials, pans[0], C, qmi, qma, qmis, qmas)
 
     F = p5.find_freg(ctfiducials, Cs)
 
-    CT = p6.tip_in_CT(emnav, pans[1], F, C, qmi, qma, qmis, qmas)
+    CT = p6.tip_in_CT(empivot, emnav, pans[0], F, C, qmi, qma, qmis, qmas)
 
     return CT.data

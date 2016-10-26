@@ -41,7 +41,7 @@ def tip_in_EM(empivot, emfiducialss, ptip, coeffs, q_min, q_max, q_star_min, q_s
     Cs = pc.PointCloud()
 
     for frame in G:
-        F = frame[0].register(pc.PointCloud(G_j)).inv
+        F = pc.PointCloud(G_j).register(frame[0])
         C = pc.PointCloud(ptip.reshape((3, 1))).transform(F)
         Cs = Cs.add(C)
 

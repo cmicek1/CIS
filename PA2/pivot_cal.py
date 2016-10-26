@@ -19,7 +19,7 @@ def pivot(G, nframe):
 
     # set rotational side of matrix for least squares problem
     for k in range(n_frames):
-        F = G[k][nframe].register(pc.PointCloud(G_j))
+        F = pc.PointCloud(G_j).register(G[k][nframe])
         R, p = F.r, F.p
         for i in range(0, 3):
             R_I[k * 3][i] = R[0][i]
@@ -36,7 +36,7 @@ def pivot(G, nframe):
     # solve as an Ax=B problem (R_I * [pcal ppiv] = p_leastsq)
     p_soln = np.linalg.lstsq(R_I, p_lstsq)
 
-    p_cal = np.array(p_soln[0][3:6])
-    p_piv = np.array(p_soln[0][0:3])
+    p_cal = np.array(p_soln[0][0:3])
+    p_piv = np.array(p_soln[0][3:6])
 
     return p_cal, p_piv
