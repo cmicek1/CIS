@@ -42,4 +42,5 @@ def tip_in_EM(emfiducialss, ptip, coeffs, q_min, q_max, q_star_min, q_star_max):
         C = pc.PointCloud(ptip.reshape((3, 1))).transform(F)
         Cs = Cs.add(C)
 
+
     return Cs
