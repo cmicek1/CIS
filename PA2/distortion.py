@@ -84,6 +84,7 @@ def correct(inputs, coeffs, q_min, q_max, q_star_min, q_star_max):
     :type q_star_max: numpy.array(numpy.float64) shape (3,) or (, 3)
 
     :return: outputcloud: dewarped set of point clouds extracted from input file
+
     :rtype [PointCloud.PointCloud]
 
     """
@@ -110,6 +111,7 @@ def correct(inputs, coeffs, q_min, q_max, q_star_min, q_star_max):
 
 def normalize(pPerFrame, c, q_min, q_max):
     """
+    Normalizes a frame of data to be between 0 and 1.
 
     :param pPerFrame: Points per frame of data
     :param c: matrix of data to normalize
@@ -122,7 +124,8 @@ def normalize(pPerFrame, c, q_min, q_max):
     :type q_max: numpy.array(numpy.float64) shape (3,) or (, 3)
 
     :return: u_s: normalized matrix of data
-    :type u_s: numpy.array(numpy.float64) shape (pPerFrame, 3)
+
+    :rtype u_s: numpy.array(numpy.float64) shape (pPerFrame, 3)
 
     """
 
@@ -135,14 +138,21 @@ def normalize(pPerFrame, c, q_min, q_max):
     return u_s
 
 
-def normalize_vector(c, q_min, q_max):
-
-    u_s = (c - q_min)/(q_min - q_max)
-
-    return u_s
-
-
 def solve_fcu(F, U):
+    """
+    Uses least squares method to solve for an unknown matrix.
+
+    :param F: Matrix of Bernstein polynomials
+    :param U: Matrix of known corrected data values
+
+    :type F: numpy.array(numpy.float64) shape (totalPoints, 216)
+    :type U: numpy.array(numpy.float64) shape (totalPoints, 3)
+
+    :return: C: Matrix of distortion coefficients
+
+    :rtype: C: numpy.array(numpy.float64) shape (216, 3)
+
+    """
 
     C = np.linalg.lstsq(F, U)
 
@@ -150,6 +160,27 @@ def solve_fcu(F, U):
 
 
 def calc_q(c, c_exp):
+    """
+    Calculates a vector of the minimum value for each coordinate in two sets of points, one experimental and one
+    "ground truth".
+
+    :param c: Array of points of experimental data.
+    :param c_exp: Array of points of "ground truth" data.
+
+    :type c: numpy.array(numpy.float64) shape (totalPoints, 3)
+    :type c_exp: numpy.array(numpy.float64) shape (totalPoints, 3)
+
+    :return: q_min: vector of minimum value for each coordinate in experimental data set
+    :return: q_max: vector of maximum value for each coordinate in experimental data set
+    :return: q_star_min: vector of minimim value for each coordinate in expected data set
+    :return: q_star_max: vector of maximum value for each coordinate in expected data set
+
+    :rtype q_min: numpy.array(numpy.float64) shape (3,) or (, 3)
+    :rtype q_max: numpy.array(numpy.float64) shape (3,) or (, 3)
+    :rtype q_star_min: numpy.array(numpy.float64) shape (3,) or (, 3)
+    :rtype q_star_max: numpy.array(numpy.float64) shape (3,) or (, 3)
+
+    """
 
     q_min = np.zeros(3)
     q_max = np.zeros(3)
@@ -166,15 +197,69 @@ def calc_q(c, c_exp):
 
 
 def bernstein(N, k, u):
+    """
+    Calculates Bernstein function.
+
+    :param N: Degree of Bernstein polynomial
+    :param k: Number of "successes"
+    :param u: noramlized data value
+
+    :type N: Integer
+    :type k: Integer
+    :type u: numpy.float64
+
+    :return: B: value of Bernstein function
+
+    :rtype: B: numpy.float64
+
+    """
     B = spmisc.comb(N, k, exact=True) * math.pow(1 - u, N - k) * math.pow(u, k)
     return B
 
 
 def f_ijk(N, i, j, k, u_x, u_y, u_z):
+    """
+    Calculates value for designated position in F matrix using Bernstein functions
+
+    :param N: degree of bernstein polynomial
+    :param i: number of successes for x value
+    :param j: number of successes for y value
+    :param k: number of successes for z value
+    :param u_x: x value of normalized data
+    :param u_y: y value of normalized data
+    :param u_z: z value of normalized data
+
+    :type N: Integer
+    :type i: Integer
+    :type j: Integer
+    :type k: numpy.float64
+    :type u_x: numpy.float64
+    :type u_y: numpy.float64
+    :type u_z: numpy.float64
+
+    :return: designed value to insert into F matrix
+
+    :rtype: numpy.float64
+
+    """
     return bernstein(N, i, u_x) * bernstein(N, j, u_y) * bernstein(N, k, u_z)
 
 
 def f_matrix(u, deg):
+    """
+    Calculates the matrix of Bernstein polynomials from the scaled experimental data, the "F matrix".
+
+    :param u: array of points of scaled experimental data
+    :param deg: degree of berenstein polynomial (should be 5 for this application)
+
+    :type u: numpy.array(numpy.float64) shape (totalPoints, 3)
+    :type deg: Integer
+
+    :return: f_mat: matrix of Bernstein polynomials from scaled experimental data
+
+    :rtype: numpy.array(numpy.float64) shape (total points, 216)
+
+    """
     #deg is degree of berenstein polynomial, u is normalized distorted data
 
     nPoints = np.shape(u)[0]
