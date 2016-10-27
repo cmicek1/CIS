@@ -7,6 +7,31 @@ import math
 
 
 def distcal(calbody_file, calreadings_file, empivot_file):
+    """
+    Calculates the coefficient matrix of the distortion correction file and applies it to a set of EM pivot calibration
+    frames to return the corrected pivot calibration.
+
+    :param calbody_file: File name/path for the calibration object data file
+    :param calreadings_file: File name/path for the readings from the trackers
+    :param empivot_file: File name/path for EM pivot poses
+
+    :type calbody_file: str
+    :type emfiducialss: str
+    :type empivot_file: str
+
+    :return: pivotanswer: the corrected pivot calibration
+    :return: coeff_mat: matrix of the coefficients for dewarping a data set
+    :return: q_min: vector of minimum value for each coordinate in experimental data set
+    :return: q_max: vector of maximum value for each coordinate in experimental data set
+    :return: q_star_min: vector of minimim value for each coordinate in expected data set
+    :return: q_star_max: vector of maximum value for each coordinate in expected data set
+
+    :rtype coeffs: numpy.array([numpy.float64][]) degree**3 x 3
+    :rtype q_min: numpy.array(numpy.float64) shape (3,) or (, 3)
+    :rtype q_max: numpy.array(numpy.float64) shape (3,) or (, 3)
+    :rtype q_star_min: numpy.array(numpy.float64) shape (3,) or (, 3)
+    :rtype q_star_max: numpy.array(numpy.float64) shape (3,) or (, 3)
+    """
 
     tracker_frames = pc.fromfile(calreadings_file)
 
@@ -41,7 +66,27 @@ def distcal(calbody_file, calreadings_file, empivot_file):
 
 
 def correct(inputs, coeffs, q_min, q_max, q_star_min, q_star_max):
+    """
+    Performs dewarping on PointClouds extracted from a given input file.
 
+    :param inputs: file with point clouds to be dewarped
+    :param coeffs: coefficient matrix for distortion correction
+    :param q_min: vector of minimum value for each coordinate in experimental data set
+    :param q_max: vector of maximum value for each coordinate in experimental data set
+    :param q_star_min: vector of minimim value for each coordinate in expected data set
+    :param q_star_max: vector of maximum value for each coordinate in expected data set
+
+    :type inputs: str
+    :type coeffs: numpy.array([numpy.float64][]) degree**3 x 3
+    :type q_min: numpy.array(numpy.float64) shape (3,) or (, 3)
+    :type q_max: numpy.array(numpy.float64) shape (3,) or (, 3)
+    :type q_star_min: numpy.array(numpy.float64) shape (3,) or (, 3)
+    :type q_star_max: numpy.array(numpy.float64) shape (3,) or (, 3)
+
+    :return: outputcloud: dewarped set of point clouds extracted from input file
+    :rtype [PointCloud.PointCloud]
+
+    """
     inputcloud = pc.fromfile(inputs)
 
     outputcloud = []
@@ -64,6 +109,22 @@ def correct(inputs, coeffs, q_min, q_max, q_star_min, q_star_max):
 
 
 def normalize(pPerFrame, c, q_min, q_max):
+    """
+
+    :param pPerFrame: Points per frame of data
+    :param c: matrix of data to normalize
+    :param q_min: vector of minimum value for each coordinate in experimental data set
+    :param q_max: vector of maximum value for each coordinate in experimental data set
+
+    :type pPerFrame: Integer
+    :type c: numpy.array(numpy.float64) shape (pPerFrame, 3)
+    :type q_min: numpy.array(numpy.float64) shape (3,) or (, 3)
+    :type q_max: numpy.array(numpy.float64) shape (3,) or (, 3)
+
+    :return: u_s: normalized matrix of data
+    :type u_s: numpy.array(numpy.float64) shape (pPerFrame, 3)
+
+    """
 
     u_s = np.zeros([pPerFrame, 3])
 
