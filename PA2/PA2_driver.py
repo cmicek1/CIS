@@ -23,10 +23,17 @@ def main():
     # Add 'test' command line option
     if str(sys.argv[1]) == 'test':
         if len(sys.argv) == 3:
-            tolerance = float(sys.argv[2])
+            empivot = sys.argv[2]
+        else:
+            empivot = "PA12 - Student Data/pa2-debug-a-empivot.txt"
+        if len(sys.argv) == 4:
+            tolerance = float(sys.argv[3])
             test.test_reg(tolerance)
         else:
             test.test_reg()
+
+        test.test_pivot_cal(empivot)
+        test.test_f()
         sys.exit(0)
 
     # Parse arguments for regular execution

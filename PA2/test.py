@@ -1,6 +1,8 @@
 import numpy as np
 import scipy.linalg as scialg
 import PointCloud as pc
+import pivot_cal as piv
+import distortion as d
 
 
 def test_reg(tolerance=1e4):
@@ -54,6 +56,88 @@ def test_reg(tolerance=1e4):
     print(np.all(np.abs(p - f.p) <= tolerance))
 
     print('\nRegistration tests passed!')
+
+
+def test_pivot_cal(empivot, tolerance=1e-2):
+    """
+    Tests whether pivot calibration is correct by using the fact that all frame transformations F_G[k] from pointer to
+    EM coordinates will map p_tip to p_dimple.
+
+    :param empivot: The name/path of an empivot.txt file, containing frames of EM tracker data during pivot calibration
+    :param tolerance: Error tolerance between calculated and predicted values. Default is 1e-2.
+
+    :type empivot: str
+    :type tolerance: float
+
+    :return: None
+    """
+    print('\nTesting pivot calibration...')
+    print('\nExtracting marker points:')
+    G = pc.fromfile(empivot)
+    for i in range(len(G)):
+        print('\n')
+        print(G[i][0].data)
+
+    p_ans = piv.pivot(G, 0, True)
+
+    print('\np_tip:')
+    print(p_ans[0])
+
+    print('\np_dimple:')
+    print(p_ans[1])
+
+    print('\nIf calibration is correct, all frame transformations F_G[k] from pointer to EM coordinates will map')
+    print('p_tip to p_dimple. Assert that this is true:')
+
+    print('\ntolerance = {}'.format(tolerance))
+
+    for i in range(len(G)):
+        passes = np.all(np.abs(
+            p_ans[1].reshape((3, 1)) - pc.PointCloud(p_ans[0].reshape((3, 1))).transform(p_ans[2][i]).data) <=
+                        tolerance)
+        assert passes
+        print('\nFrame: {} of {}: {}'.format(i + 1, len(G), True))
+
+    print('\nCalibration tests passed!')
+
+
+def test_f():
+    """
+    Sanity check for Bernstein polynomial basis matrix, F. Checks if shape is as expected, and that the calculation
+    returns the expected basis for an input of ones.
+
+    :return: None
+    """
+    print('Test Bernstein polynomial matrix F for distortion correction.')
+
+    print('\nIf input is ones, last column should be 1, with all else 0:')
+    u = np.ones((3, 10))
+    print('\nu (3 x 10):')
+    print(u)
+
+    F = d.f_matrix(u, 5)
+    print('\nF (5th degree):')
+    print(F)
+
+    print('\nFirst check size (should be N x 6**3)')
+    expected = (3, 6**3)
+    print('Shape expected: {}'.format(expected))
+    print('Shape received: {}'.format(F.shape))
+    print('Match?')
+    assert expected == F.shape
+    print(expected == F.shape)
+
+    print('\nIs last column ones?')
+    passes = np.all(F[:, -1] == 1)
+    assert passes
+    print(passes)
+
+    print('\nIs the rest of F zero?')
+    passes = np.all(F[:, 0:F.shape[1] - 1] == 0)
+    assert passes
+    print(passes)
+
+    print('F tests pass!')
 
 
 def _rotation(angles):

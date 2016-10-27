@@ -39,10 +39,10 @@ working separately and together.
 
 Run configurations:
 To test:
-python PA2_driver.py test tolerance(optional)
+python PA2_driver.py test "xx-empivot.txt"(optional) tolerance(optional)
 
 To evaluate input:
-python PA2_driver.py “xx-calbody.txt” “xx-calreadings.txt” “xx-empivot.txt” “xx-optpivot.txt”
-“xx-ct-fiducials.txt” “xx-em-fiducialss.txt” “xx-EM-nav.txt”
+python PA2_driver.py “xx-calbody.txt” “xx-calreadings.txt” “xx-empivot.txt” “xx-ct-fiducials.txt”
+“xx-em-fiducialss.txt” “xx-EM-nav.txt”
 
 Detailed instructions for running this program are included in our report.
