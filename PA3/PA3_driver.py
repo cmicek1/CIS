@@ -1,6 +1,7 @@
 #should include main method
 
 import ICPfilereading as icpf
+import ICPmatching as icp
 
 def main(meshfile, bodyA, bodyB, sampleData):
     """
@@ -17,3 +18,5 @@ def main(meshfile, bodyA, bodyB, sampleData):
     nledB, ledB, tipB = icpf.bodyDef(bodyB)
 
     aFrames, bFrames = icpf.readSample(sampleData, nledA, nledB)
+
+    icp.findTipB(aFrames, bFrames, tipA)

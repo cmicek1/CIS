@@ -1,5 +1,6 @@
 import numpy as np
 import PointCloud as pc
+import Frame as fr
 
 def readSample(fpath, nA, nB):
     """
@@ -31,10 +32,9 @@ def readSample(fpath, nA, nB):
                 bCloud[k][j] = np.float64(point[k].replace(',', ''))
         for j in range(nMarkers - nA - nB):
             f.readline()
-        aCloud = pc.PointCloud(aCloud)
-        bCloud = pc.PointCloud(bCloud)
-        aFrames.append(aCloud)
-        bFrames.append(bCloud)
+
+        aFrames.append(pc.PointCloud(aCloud))
+        bFrames.append(pc.PointCloud(bCloud))
 
     return aFrames, bFrames
 
@@ -54,7 +54,6 @@ def bodyDef(fpath):
 
     for i in range(nMarkers):
         led = f.readline().split()
-        print led
         for j in range(0, 3):
             pcArray[j][i] = np.float64(led[j])
 
