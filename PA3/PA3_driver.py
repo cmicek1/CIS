@@ -1,8 +1,8 @@
 #should include main method
 
-import ICPmatching as icp
+import ICPfilereading as icpf
 
-def pa3(meshfile, bodyA, bodyB):
+def main(meshfile, bodyA, bodyB, sampleData):
     """
     Super simple driver, @chris please make this better, I'm just using it for testing for now.
     :param meshfile:
@@ -11,14 +11,9 @@ def pa3(meshfile, bodyA, bodyB):
     :return:
     """
 
-    vCoords, vIndices = icp.meshDef(meshfile)
-    print vCoords
-    print vIndices
+    vCoords, vIndices = icpf.meshDef(meshfile)
 
-    ledA, tipA = icp.bodyDef(bodyA)
-    print ledA.data
-    print tipA.data
+    nledA, ledA, tipA = icpf.bodyDef(bodyA)
+    nledB, ledB, tipB = icpf.bodyDef(bodyB)
 
-    ledB, tipB = icp.bodyDef(bodyB)
-    print ledB.data
-    print tipB.data
+    aFrames, bFrames = icpf.readSample(sampleData, nledA, nledB)
