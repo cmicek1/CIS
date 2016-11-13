@@ -19,4 +19,8 @@ def main(meshfile, bodyA, bodyB, sampleData):
 
     aFrames, bFrames = icpf.readSample(sampleData, nledA, nledB)
 
-    icp.findTipB(aFrames, bFrames, tipA)
+    d_kPoints = icp.findTipB(aFrames, bFrames, tipA)
+
+    #in problem 4 we need to do something else to d_kPoints before finding closest points on triangles (s_i)
+
+    c_kPoints = icp.findClosestPoint(d_kPoints, vCoords, VIndices)
