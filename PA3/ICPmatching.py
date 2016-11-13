@@ -11,7 +11,6 @@ def bodyDef(fpath):
     f = open(fpath, 'r')
 
     nMarkers = int(f.readline().split()[0])
-    print nMarkers
 
     pcArray = np.zeros([3, nMarkers])
 
@@ -31,7 +30,7 @@ def bodyDef(fpath):
 
     return ledPC, tip
 
-def readInput(fpath):
+def meshDef(fpath):
     """
     Extract two arrays with information about triangles from an input file.
     :param fpath: The file path to the input data.
