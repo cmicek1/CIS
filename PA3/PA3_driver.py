@@ -1,7 +1,7 @@
-#should include main method
-
 import ICPfilereading as icpf
 import ICPmatching as icp
+import Frame as fr
+import numpy as np
 
 def main(meshfile, bodyA, bodyB, sampleData):
     """
@@ -19,8 +19,10 @@ def main(meshfile, bodyA, bodyB, sampleData):
 
     aFrames, bFrames = icpf.readSample(sampleData, nledA, nledB)
 
-    d_kPoints = icp.findTipB(aFrames, bFrames, tipA)
+    d_kPoints = icp.findTipB(aFrames, ledA, tipA)
 
-    #in problem 4 we need to do something else to d_kPoints before finding closest points on triangles (s_i)
+    I = fr.Frame(np.identity(3), np.zeros(3))
 
-    c_kPoints = icp.findClosestPoint(d_kPoints, vCoords, VIndices)
+    s_i = icp.computeSamplePoints(d_kPoints, I)
+
+    c_kPoints = icp.ICPmatch(s_i, vCoords, vIndices)
