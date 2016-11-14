@@ -3,13 +3,15 @@ import numpy.linalg as numalg
 import PointCloud as pc
 import Frame as fr
 
-def findTipB(aFrames, ledA, tipA):
+def findTipB(aFrames, bFrames, ledA, tipA, ledB, tipB):
 
     d_ks = np.zeros([3, len(aFrames)])
 
     for i in range(len(aFrames)):
         regA = ledA.register(aFrames[i])
-        d_k = regA.r.dot(tipA.data) + regA.p
+        regB = ledB.register(bFrames[i])
+        reg = regB.inv.compose(regA)
+        d_k = reg.r.dot(tipA.data) + reg.p
         for j in range(0, 3):
             d_ks[j][i] = d_k[j]
 
@@ -24,7 +26,7 @@ def computeSamplePoints(d_k, freg):
 
 def findClosestPoint(s_i, vCoords, vInd):
     """
-    Finds the closest point to p on a mesh defined by vCoords (coordinates of vertices) and vInd (vertex indices for
+    Finds the closest point to s_i on a mesh defined by vCoords (coordinates of vertices) and vInd (vertex indices for
     each triangle.
     :param p:
     :param vCoords:
@@ -70,9 +72,8 @@ def findClosestPoint(s_i, vCoords, vInd):
 
     return minPoint
 
-
-
 def projectOnSegment(c, p, q):
+
     l = ((c-p).dot(q-p))/((q-p).dot(q-p))
     lambda_star = max(0, min(l, 1))
     c_star = p + lambda_star*(q-p)
@@ -80,10 +81,17 @@ def projectOnSegment(c, p, q):
 
 
 def ICPmatch(s_i, vCoords, vInd):
+
     c_ij = np.zeros([3, np.shape(s_i)[1]])
     for i in range(np.shape(s_i)[1]):
-       # c = np.zeros([3, 1])
         c = findClosestPoint(s_i[:,i], vCoords, vInd)
         c_ij[:, i] = c[:]
 
     return c_ij
+
+def calcDifference(c_kPoints, d_kPoints):
+    dist = np.zeros(np.shape(c_kPoints)[1])
+    for i in range(np.shape(c_kPoints)[1]):
+        dist[i] = numalg.norm(d_kPoints[:, i] - c_kPoints[:, i])
+
+    return dist
