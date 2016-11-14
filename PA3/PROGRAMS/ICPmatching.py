@@ -50,6 +50,7 @@ def findClosestPoint(s_i, vCoords, vInd):
         u = soln[0][1]
 
         c = p + l * (q - p) + u * (r - p)
+        c_star = np.zeros(3)
 
         if ((l > 0) and (u > 0) and (l + u < 0)):
             c_star = c

@@ -11,8 +11,6 @@ def main():
     :return:
     """
 
-    testData = None
-
     # Add 'test' command line option
     if str(sys.argv[1]) == 'test':
         if len(sys.argv) == 3:
@@ -38,13 +36,11 @@ def main():
 
 def tofile(meshfile, bodyA, bodyB, sampleData, outfile):
     """
-    Super simple driver, @chris please make this better, I'm just using it for testing for now.
     :param meshfile:
     :param bodyA:
     :param bodyB:
     :return:
     """
-
     vCoords, vIndices = icpf.meshDef(meshfile)
 
     nledA, ledA, tipA = icpf.bodyDef(bodyA)
