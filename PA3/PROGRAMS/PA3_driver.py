@@ -30,6 +30,7 @@ def main():
     testData = os.getcwd() + directory + '\PA3-' + dataset + '-SampleReadingsTest.txt'
     os.chdir("..")
     outname = os.getcwd() + '\OUTPUT\PA3-' + dataset + '-Output.txt'
+    print outname
 
     # Run code for probelms 4 - 6 and save output
     tofile(surface, bodyA, bodyB, testData, outname)

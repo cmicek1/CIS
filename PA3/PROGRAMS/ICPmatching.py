@@ -1,7 +1,5 @@
 import numpy as np
 import numpy.linalg as numalg
-import PointCloud as pc
-import Frame as fr
 
 def findTipB(aFrames, bFrames, ledA, tipA, ledB, tipB):
 
