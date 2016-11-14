@@ -18,7 +18,6 @@ def findTipB(aFrames, ledA, tipA):
 def computeSamplePoints(d_k, freg):
 
     for i in range(len(d_k)):
-        print freg.r.dot(d_k[:,i])
         d_k[:, i] = freg.r.dot(d_k[:, i]).T + freg.p
 
     return d_k
@@ -32,34 +31,59 @@ def findClosestPoint(s_i, vCoords, vInd):
     :param vInd:
     :return:
     """
+    c_ij = np.zeros([3, np.shape(vInd)[1]])
 
- #   for i in range(np.shape(vInd)[1]):
-    for i in range(1):
+    for i in range(np.shape(vInd)[1]):
         p = vCoords[:, int(vInd[0][i])]
         q = vCoords[:, int(vInd[1][i])]
         r = vCoords[:, int(vInd[2][i])]
         A = np.zeros([3, 2])
-        for i in range(0, 3):
-            A[i][0] = q[i] - p[i]
-            A[i][1] = r[i] - p[i]
+
+        for j in range(0, 3):
+            A[j][0] = q[j] - p[j]
+            A[j][1] = r[j] - p[j]
 
         soln = numalg.lstsq(A, s_i - p)
         l = soln[0][0]
         u = soln[0][1]
-        lambda_prime = calcLambdaPrime(l, u, p, q, r)
+
+        c = p + l * (q - p) + u * (r - p)
+
+        if ((l > 0) and (u > 0) and (l + u < 0)):
+            c_star = c
+        elif (l < 0):
+            c_star = projectOnSegment(c, r, p)
+        elif (u < 0):
+            c_star = projectOnSegment(c, p, q)
+        elif (l + u > 1):
+            c_star = projectOnSegment(c, q, r)
+
+        c_ij[:, i] = c_star[:]
+
+    dist = numalg.norm(s_i - c_ij[:, 0])
+    minPoint = c_ij[:, 0]
+    for i in range(np.shape(c_ij)[1]):
+        d = numalg.norm(s_i - c_ij[:, i])
+        if (d < dist):
+            dist = d
+            minPoint = c_ij[:, i]
+
+    return minPoint
 
 
-def calcLambdaPrime(l, u, p, q, r):
-    print p
-    print q
-    print q-p
-    print l*(q-p)
-    c = p + l*(q-p) + u*(r-p)
-    print c
+
+def projectOnSegment(c, p, q):
+    l = ((c-p).dot(q-p))/((q-p).dot(q-p))
+    lambda_star = max(0, min(l, 1))
+    c_star = p + lambda_star*(q-p)
+    return c_star
 
 
 def ICPmatch(s_i, vCoords, vInd):
-    c_ij = np.zeros([3, len(s_i)])
-    for i in range(1):
-        c = np.zeros([3, 1])
+    c_ij = np.zeros([3, np.shape(s_i)[1]])
+    for i in range(np.shape(s_i)[1]):
+       # c = np.zeros([3, 1])
         c = findClosestPoint(s_i[:,i], vCoords, vInd)
+        c_ij[:, i] = c[:]
+
+    return c_ij
