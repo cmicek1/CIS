@@ -2,15 +2,41 @@ import ICPfilereading as icpf
 import ICPmatching as icp
 import Frame as fr
 import numpy as np
-import numpy.linalg as numalg
 import sys, os
+import testICP as test
 
 def main():
     """
     Main method, takes command line arguments to either run tests or run program with a given data set (x-ddddd).
     :return:
     """
-def manual(meshfile, bodyA, bodyB, sampleData, outfile):
+
+    testData = None
+
+    # Add 'test' command line option
+    if str(sys.argv[1]) == 'test':
+        if len(sys.argv) == 3:
+            tolerance = float(sys.argv[2])
+            #run tests with given tolerance
+      #  else:
+            #run tests with no given tolerance
+            sys.exit(0)
+
+    # Parse arguments for regular execution
+    directory = sys.argv[1]
+    dataset = sys.argv[2]
+
+    surface = os.getcwd() + directory + '\Problem3MeshFile.sur'
+    bodyA = os.getcwd() + directory + '\Problem3-BodyA.txt'
+    bodyB = os.getcwd() + directory + '\Problem3-BodyB.txt'
+    testData = os.getcwd() + directory + '\PA3-' + dataset + '-SampleReadingsTest.txt'
+    os.chdir("..")
+    outname = os.getcwd() + '\OUTPUT\PA3-' + dataset + '-Output.txt'
+
+    # Run code for probelms 4 - 6 and save output
+    tofile(surface, bodyA, bodyB, testData, outname)
+
+def tofile(meshfile, bodyA, bodyB, sampleData, outfile):
     """
     Super simple driver, @chris please make this better, I'm just using it for testing for now.
     :param meshfile:
@@ -50,3 +76,6 @@ def writefile(d_k, c_k, dist, outfile):
         f.write('{0:>10}\n'.format(format(dist[i], '.3f')))
 
     f.close()
+
+if __name__ == '__main__':
+    main()

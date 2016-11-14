@@ -1,6 +1,7 @@
 import numpy as np
-import scipy.linalg as scialg
 import pandas as pd
+import scipy.linalg as scialg
+
 import Frame
 
 
