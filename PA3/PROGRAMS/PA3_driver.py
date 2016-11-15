@@ -31,12 +31,12 @@ def main():
     directory = sys.argv[1]
     dataset = sys.argv[2]
 
-    surface = os.getcwd() + directory + '\Problem3MeshFile.sur'
-    bodyA = os.getcwd() + directory + '\Problem3-BodyA.txt'
-    bodyB = os.getcwd() + directory + '\Problem3-BodyB.txt'
-    testData = os.getcwd() + directory + '\PA3-' + dataset + '-SampleReadingsTest.txt'
+    surface = os.getcwd() + directory + '/Problem3MeshFile.sur'
+    bodyA = os.getcwd() + directory + '/Problem3-BodyA.txt'
+    bodyB = os.getcwd() + directory + '/Problem3-BodyB.txt'
+    testData = os.getcwd() + directory + '/PA3-' + dataset + '-SampleReadingsTest.txt'
     os.chdir("..")
-    outname = os.getcwd() + '\OUTPUT\PA3-' + dataset + '-Output.txt'
+    outname = os.getcwd() + '/OUTPUT/PA3-' + dataset + '-Output.txt'
 
     # Run code for probelms 4 - 6 and save output
     tofile(surface, bodyA, bodyB, testData, outname)
