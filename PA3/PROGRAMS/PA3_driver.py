@@ -16,10 +16,16 @@ def main():
     if str(sys.argv[1]) == 'test':
         if len(sys.argv) == 3:
             tolerance = float(sys.argv[2])
-            #run tests with given tolerance
-      #  else:
-            #run tests with no given tolerance
-            sys.exit(0)
+            # run tests with given tolerance
+            test.testFindTipB(tolerance)
+            test.testProjectOnSegment(tolerance)
+            test.testFindClosestPoint(tolerance)
+        else:
+            # run tests with no given tolerance
+            test.testFindTipB()
+            test.testProjectOnSegment()
+            test.testFindClosestPoint()
+        sys.exit(0)
 
     # Parse arguments for regular execution
     directory = sys.argv[1]
@@ -51,7 +57,7 @@ def tofile(meshfile, bodyA, bodyB, sampleData, outfile):
 
     aFrames, bFrames = icpf.readSample(sampleData, nledA, nledB)
 
-    d_kPoints = icp.findTipB(aFrames, bFrames, ledA, tipA, ledB, tipB)
+    d_kPoints = icp.findTipB(aFrames, bFrames, ledA, tipA, ledB)
 
     I = fr.Frame(np.identity(3), np.zeros(3))
 
@@ -64,6 +70,7 @@ def tofile(meshfile, bodyA, bodyB, sampleData, outfile):
     writefile(d_kPoints, c_kPoints, dist, outfile)
 
     print("--- %s seconds ---" % (time.time() - start_time))
+
 
 def writefile(d_k, c_k, dist, outfile):
     f = open(outfile, 'w')

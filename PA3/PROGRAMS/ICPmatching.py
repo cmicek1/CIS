@@ -1,7 +1,7 @@
 import numpy as np
 import numpy.linalg as numalg
 
-def findTipB(aFrames, bFrames, ledA, tipA, ledB, tipB):
+def findTipB(aFrames, bFrames, ledA, tipA, ledB):
     """
     Finds the positions of the tip of pointer A with respect to the B rigid body for each sample frame.
     :param aFrames: Sample frames of A pointer
@@ -26,6 +26,7 @@ def findTipB(aFrames, bFrames, ledA, tipA, ledB, tipB):
 
     return d_ks
 
+
 def computeSamplePoints(d_k, freg):
     """
     Transforms tip points with given transformation.
@@ -38,6 +39,7 @@ def computeSamplePoints(d_k, freg):
         d_k[:, i] = freg.r.dot(d_k[:, i]).T + freg.p
 
     return d_k
+
 
 def findClosestPoint(s_i, vCoords, vInd):
     """
@@ -68,13 +70,13 @@ def findClosestPoint(s_i, vCoords, vInd):
         c = p + l * (q - p) + u * (r - p)
         c_star = np.zeros(3)
 
-        if ((l > 0) and (u > 0) and (l + u < 0)):
+        if l > 0 and u > 0 and l + u < 1:
             c_star = c
-        elif (l < 0):
+        elif l < 0:
             c_star = projectOnSegment(c, r, p)
-        elif (u < 0):
+        elif u < 0:
             c_star = projectOnSegment(c, p, q)
-        elif (l + u > 1):
+        elif l + u > 1:
             c_star = projectOnSegment(c, q, r)
 
         c_ij[:, i] = c_star[:]
@@ -89,6 +91,7 @@ def findClosestPoint(s_i, vCoords, vInd):
 
     return minPoint
 
+
 def projectOnSegment(c, p, q):
     """
     Projects point c onto line segment with endpoints p and q.
@@ -98,7 +101,7 @@ def projectOnSegment(c, p, q):
 
     :return: c_star: the projection of c onto line segment p_q
     """
-    l = ((c-p).dot(q-p))/((q-p).dot(q-p))
+    l = np.float64(((c-p).dot(q-p))) / np.float64(((q-p).dot(q-p)))
     lambda_star = max(0, min(l, 1))
     c_star = p + lambda_star*(q-p)
     return c_star
@@ -119,6 +122,7 @@ def ICPmatch(s_i, vCoords, vInd):
         c_ij[:, i] = c[:]
 
     return c_ij
+
 
 def calcDifference(c_kPoints, d_kPoints):
     """
