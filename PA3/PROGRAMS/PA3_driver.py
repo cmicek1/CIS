@@ -3,6 +3,7 @@ import ICPmatching as icp
 import Frame as fr
 import numpy as np
 import sys, os
+import time
 import testICP as test
 
 def main():
@@ -30,7 +31,6 @@ def main():
     testData = os.getcwd() + directory + '\PA3-' + dataset + '-SampleReadingsTest.txt'
     os.chdir("..")
     outname = os.getcwd() + '\OUTPUT\PA3-' + dataset + '-Output.txt'
-    print outname
 
     # Run code for probelms 4 - 6 and save output
     tofile(surface, bodyA, bodyB, testData, outname)
@@ -42,6 +42,8 @@ def tofile(meshfile, bodyA, bodyB, sampleData, outfile):
     :param bodyB:
     :return:
     """
+    start_time = time.time()
+
     vCoords, vIndices = icpf.meshDef(meshfile)
 
     nledA, ledA, tipA = icpf.bodyDef(bodyA)
@@ -61,6 +63,7 @@ def tofile(meshfile, bodyA, bodyB, sampleData, outfile):
 
     writefile(d_kPoints, c_kPoints, dist, outfile)
 
+    print("--- %s seconds ---" % (time.time() - start_time))
 
 def writefile(d_k, c_k, dist, outfile):
     f = open(outfile, 'w')
