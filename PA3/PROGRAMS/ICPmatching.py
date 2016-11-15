@@ -49,7 +49,6 @@ def computeSamplePoints(d_k, freg):
     :return: d_k: Transformed array of points
     :rtype: pc.PointCloud
     """
-    print d_k
     for i in range(np.shape(d_k.data)[1]):
         d_k.data[:, i] = freg.r.dot(d_k.data[:, i]).T + freg.p
 
