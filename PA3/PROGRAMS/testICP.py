@@ -47,8 +47,8 @@ def testFindTipB(tolerance=1e-4):
 
     print('\nAssert difference between created and calculated d_k is less than tolerance = {}'.format(tolerance))
     print('\nIs calculated d_k within tolerance?')
-    assert np.all(np.abs(d_k - test_d_k) <= tolerance)
-    print(np.all(np.abs(d_k - test_d_k) <= tolerance))
+    assert np.all(np.abs(d_k - test_d_k.data) <= tolerance)
+    print(np.all(np.abs(d_k - test_d_k.data) <= tolerance))
     print('Find d_k test passed!')
 
 
@@ -172,7 +172,7 @@ def testFindClosestPoint(tolerance=1e-4):
     print(c)
 
     print('Calculated point: c_calc =')
-    c_calc = icpm.findClosestPoint(s, v_coords, v_inds)
+    c_calc = icpm.findClosestPointLinear(s, v_coords, v_inds)
     print(c_calc)
 
     print('\nMatch within tolerance?')

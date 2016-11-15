@@ -75,6 +75,10 @@ def tofile(meshfile, bodyA, bodyB, sampleData, outfile):
 def writefile(d_k, c_k, dist, outfile):
     f = open(outfile, 'w')
     h, t = os.path.split(outfile)
+
+    d_k = d_k.data
+    c_k = c_k.data
+
     f.write('{0} {1}\n'.format(np.shape(d_k)[1], t))
 
     for i in range(np.shape(d_k)[1]):

@@ -1,6 +1,7 @@
 import numpy as np
 import numpy.linalg as numalg
 import BoundingSphere as bs
+import PointCloud as pc
 
 def findTipB(aFrames, bFrames, ledA, tipA, ledB):
     """
@@ -11,6 +12,13 @@ def findTipB(aFrames, bFrames, ledA, tipA, ledB):
     :param tipA: Position of tip with respect to A pointer
     :param ledB: Position of LEDs on B rigid body in calibration frame
     :param tipB: Position of attachment of B to bone in B coordinate system
+
+    :type aFrames: [pc.PointCloud]
+    :type bFrames: [pc.PointCloud]
+    :type ledA: pc.PointCloud
+    :type tipA: pc.PointCloud
+    :type ledB: pc.PointCloud
+    :type tipB: pc.PointCloud
 
     :return: d_ks: Tip positions with respect to B rigid body in each data frame
     """
@@ -25,7 +33,7 @@ def findTipB(aFrames, bFrames, ledA, tipA, ledB):
         for j in range(0, 3):
             d_ks[j][i] = d_k[j]
 
-    return d_ks
+    return pc.PointCloud(d_ks)
 
 
 def computeSamplePoints(d_k, freg):
@@ -36,11 +44,11 @@ def computeSamplePoints(d_k, freg):
 
     :return: d_k: Transformed array of points
     """
-    for i in range(len(d_k)):
-        d_k[:, i] = freg.r.dot(d_k[:, i]).T + freg.p
+    print d_k
+    for i in range(np.shape(d_k.data)[1]):
+        d_k.data[:, i] = freg.r.dot(d_k.data[:, i]).T + freg.p
 
     return d_k
-
 
 def findClosestPoint(s_i, vCoords, vInd, spheres):
     """
@@ -127,12 +135,12 @@ def ICPmatch(s_i, vCoords, vInd):
     :return: c_ij closest point on surface to each point in s_i
     """
     spheres = bs.createBS(vCoords, vInd)
-    c_ij = np.zeros([3, np.shape(s_i)[1]])
-    for i in range(np.shape(s_i)[1]):
-        c = findClosestPoint(s_i[:,i], vCoords, vInd, spheres)
+    c_ij = np.zeros([3, np.shape(s_i.data)[1]])
+    for i in range(np.shape(s_i.data)[1]):
+        c = findClosestPoint(s_i.data[:,i], vCoords, vInd, spheres)
         c_ij[:, i] = c[:]
 
-    return c_ij
+    return pc.PointCloud(c_ij)
 
 
 def calcDifference(c_kPoints, d_kPoints):
@@ -143,16 +151,15 @@ def calcDifference(c_kPoints, d_kPoints):
 
     :return: Array with distances between each pair of points
     """
-    dist = np.zeros(np.shape(c_kPoints)[1])
-    for i in range(np.shape(c_kPoints)[1]):
-        dist[i] = numalg.norm(d_kPoints[:, i] - c_kPoints[:, i])
+    dist = np.zeros(np.shape(c_kPoints.data)[1])
+    for i in range(np.shape(c_kPoints.data)[1]):
+        dist[i] = numalg.norm(d_kPoints.data[:, i] - c_kPoints.data[:, i])
 
     return dist
 
 def findClosestPointLinear(s_i, vCoords, vInd):
     """
-    Finds the closest point to s_i on a mesh defined by vCoords (coordinates of vertices) and vInd (vertex indices for
-    each triangle.
+    Performs linear search through all triangles to find the closest point on the surface to s_i.
     :param s_i: Given point
     :param vCoords: Coordinates of vertices
     :param vInd: Indices of vertex coordinates for each triangle
