@@ -2,6 +2,17 @@ import numpy as np
 import numpy.linalg as numalg
 
 def findTipB(aFrames, bFrames, ledA, tipA, ledB, tipB):
+    """
+    Finds the positions of the tip of pointer A with respect to the B rigid body for each sample frame.
+    :param aFrames: Sample frames of A pointer
+    :param bFrames: Sample frames of B rigid body
+    :param ledA: Position of LEDs on A pointer in calibration frame
+    :param tipA: Position of tip with respect to A pointer
+    :param ledB: Position of LEDs on B rigid body in calibration frame
+    :param tipB: Position of attachment of B to bone in B coordinate system
+
+    :return: d_ks: Tip positions with respect to B rigid body in each data frame
+    """
 
     d_ks = np.zeros([3, len(aFrames)])
 
@@ -16,7 +27,13 @@ def findTipB(aFrames, bFrames, ledA, tipA, ledB, tipB):
     return d_ks
 
 def computeSamplePoints(d_k, freg):
+    """
+    Transforms tip points with given transformation.
+    :param d_k: Array containing positions of tip with respect to rigid body B
+    :param freg: Frame transformation
 
+    :return: d_k: Transformed array of points
+    """
     for i in range(len(d_k)):
         d_k[:, i] = freg.r.dot(d_k[:, i]).T + freg.p
 
@@ -26,10 +43,11 @@ def findClosestPoint(s_i, vCoords, vInd):
     """
     Finds the closest point to s_i on a mesh defined by vCoords (coordinates of vertices) and vInd (vertex indices for
     each triangle.
-    :param p:
-    :param vCoords:
-    :param vInd:
-    :return:
+    :param s_i: Given point
+    :param vCoords: Coordinates of vertices
+    :param vInd: Indices of vertex coordinates for each triangle
+
+    :return: minPoint: The closest point to s_i on the surface mesh
     """
     c_ij = np.zeros([3, np.shape(vInd)[1]])
 
@@ -72,7 +90,14 @@ def findClosestPoint(s_i, vCoords, vInd):
     return minPoint
 
 def projectOnSegment(c, p, q):
+    """
+    Projects point c onto line segment with endpoints p and q.
+    :param c: Point to project onto line segment
+    :param p: Endpoint of line segment
+    :param q: Opposite endpoint of line segment
 
+    :return: c_star: the projection of c onto line segment p_q
+    """
     l = ((c-p).dot(q-p))/((q-p).dot(q-p))
     lambda_star = max(0, min(l, 1))
     c_star = p + lambda_star*(q-p)
@@ -80,7 +105,14 @@ def projectOnSegment(c, p, q):
 
 
 def ICPmatch(s_i, vCoords, vInd):
+    """
+    Finds the closest point on the surface for each point in an array of points.
+    :param s_i: Array of points
+    :param vCoords: Coordinates of each vertex
+    :param vInd: Indices of vertices for each triangle
 
+    :return: c_ij closest point on surface to each point in s_i
+    """
     c_ij = np.zeros([3, np.shape(s_i)[1]])
     for i in range(np.shape(s_i)[1]):
         c = findClosestPoint(s_i[:,i], vCoords, vInd)
@@ -89,6 +121,13 @@ def ICPmatch(s_i, vCoords, vInd):
     return c_ij
 
 def calcDifference(c_kPoints, d_kPoints):
+    """
+    Calculates the difference between two sets of points
+    :param c_kPoints: First set of points
+    :param d_kPoints: Second set of points
+
+    :return: Array with distances between each pair of points
+    """
     dist = np.zeros(np.shape(c_kPoints)[1])
     for i in range(np.shape(c_kPoints)[1]):
         dist[i] = numalg.norm(d_kPoints[:, i] - c_kPoints[:, i])
