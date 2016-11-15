@@ -21,6 +21,7 @@ def findTipB(aFrames, bFrames, ledA, tipA, ledB):
     :type tipB: pc.PointCloud
 
     :return: d_ks: Tip positions with respect to B rigid body in each data frame
+    :rtype: pc.PointCloud
     """
 
     d_ks = np.zeros([3, len(aFrames)])
@@ -42,13 +43,18 @@ def computeSamplePoints(d_k, freg):
     :param d_k: Array containing positions of tip with respect to rigid body B
     :param freg: Frame transformation
 
+    :type d_k: pc.PointCloud
+    :type freg: Frame
+
     :return: d_k: Transformed array of points
+    :rtype: pc.PointCloud
     """
     print d_k
     for i in range(np.shape(d_k.data)[1]):
         d_k.data[:, i] = freg.r.dot(d_k.data[:, i]).T + freg.p
 
     return d_k
+
 
 def findClosestPoint(s_i, vCoords, vInd, spheres):
     """
@@ -57,8 +63,15 @@ def findClosestPoint(s_i, vCoords, vInd, spheres):
     :param s_i: Given point
     :param vCoords: Coordinates of vertices
     :param vInd: Indices of vertex coordinates for each triangle
+    :param spheres: list of bounding spheres around each triangle
 
-    :return: minPoint: The closest point to s_i on the surface mesh
+    :type s_i: np.array([np.float64]) 3 x 1
+    :type vCoords: np.array([np.float64]) 3 x N
+    :type vInd: np.array([np.float64]) 3 x M
+    :type spheres: [bs.BoundingSphere]
+
+    :return: The closest point to s_i on the surface mesh
+    :rtype: np.array([np.float64]) 3 x 1
     """
     p = vCoords[:, int(vInd[0][0])]
     q = vCoords[:, int(vInd[1][0])]
@@ -84,7 +97,23 @@ def findClosestPoint(s_i, vCoords, vInd, spheres):
 
     return minPoint
 
+
 def minPointonTriangle(s_i, p, q, r):
+    """
+    Returns the closest point to s_i on a triangle defined by vertices p, q, r
+    :param s_i: point to search for closest point to
+    :param p: first vertex of triangle
+    :param q: second vertex of triangle
+    :param r: third vertex of triangle
+
+    :type s_i: np.array([np.float64]) 3 x 1
+    :type p: np.array([np.float64]) 3 x 1
+    :type q: np.array([np.float64]) 3 x 1
+    :type r: np.array([np.float64]) 3 x 1
+
+    :return: Point on triangle with minimum distance to s_i
+    :rtype: np.array([np.float64]) 3 x 1
+    """
     A = np.zeros([3, 2])
 
     for j in range(0, 3):
@@ -117,7 +146,12 @@ def projectOnSegment(c, p, q):
     :param p: Endpoint of line segment
     :param q: Opposite endpoint of line segment
 
-    :return: c_star: the projection of c onto line segment p_q
+    :type c: np.array([np.float64]) 3 x 1
+    :type p: np.array([np.float64]) 3 x 1
+    :type q: np.array([np.float64]) 3 x 1
+
+    :return: the projection of c onto line segment p_q
+    :rtype: np.array([np.float64]) 3 x 1
     """
     l = np.float64(((c-p).dot(q-p))) / np.float64(((q-p).dot(q-p)))
     lambda_star = max(0, min(l, 1))
@@ -127,12 +161,17 @@ def projectOnSegment(c, p, q):
 
 def ICPmatch(s_i, vCoords, vInd):
     """
-    Finds the closest point on the surface for each point in an array of points.
-    :param s_i: Array of points
-    :param vCoords: Coordinates of each vertex
-    :param vInd: Indices of vertices for each triangle
+    Finds the closest point on a given surface for each point in a given PointCloud
+    :param s_i: PointCloud of points to find closest point
+    :param vCoords: Coordinates of each vertex on surface
+    :param vInd: Indices of vertices for each triangle on surface
 
-    :return: c_ij closest point on surface to each point in s_i
+    :type s_i: np.array([np.float64]) 3 x 1
+    :type vCoords: np.array([np.float64]) 3 x N
+    :type vInd: np.array([np.float64]) 3 x M
+
+    :return: closest point on surface to each point in s_i
+    :rtype: pc.PointCloud
     """
     spheres = bs.createBS(vCoords, vInd)
     c_ij = np.zeros([3, np.shape(s_i.data)[1]])
@@ -149,7 +188,11 @@ def calcDifference(c_kPoints, d_kPoints):
     :param c_kPoints: First set of points
     :param d_kPoints: Second set of points
 
+    :type c_kPoints: pc.PointCloud
+    :type d_kPoints: pc.PointCloud
+
     :return: Array with distances between each pair of points
+    rtype: np.array([np.float64]) 1 x N
     """
     dist = np.zeros(np.shape(c_kPoints.data)[1])
     for i in range(np.shape(c_kPoints.data)[1]):
@@ -160,11 +203,18 @@ def calcDifference(c_kPoints, d_kPoints):
 def findClosestPointLinear(s_i, vCoords, vInd):
     """
     Performs linear search through all triangles to find the closest point on the surface to s_i.
+    NOTE: our solution does not use this method, however, we included it for testing the bounding spheres method
+    and for performance comparison.
     :param s_i: Given point
     :param vCoords: Coordinates of vertices
     :param vInd: Indices of vertex coordinates for each triangle
 
-    :return: minPoint: The closest point to s_i on the surface mesh
+    :type s_i: np.array([np.float64]) 3 x 1
+    :type vCoords: np.array([np.float64]) 3 x N
+    :type vInd: np.array([np.float64]) 3 x M
+
+    :return: The closest point to s_i on the surface mesh
+    :rtype: np.array([np.float64]) 3 x 1
     """
     c_ij = np.zeros([3, np.shape(vInd)[1]])
 
@@ -198,6 +248,7 @@ def findClosestPointLinear(s_i, vCoords, vInd):
 
     dist = numalg.norm(s_i - c_ij[:, 0])
     minPoint = c_ij[:, 0]
+
     for i in range(np.shape(c_ij)[1]):
         d = numalg.norm(s_i - c_ij[:, i])
         if (d < dist):
