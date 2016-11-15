@@ -19,11 +19,19 @@ class BoundingSphere:
 
 def calcCenterandRadius(a, b, c):
     """
-    Calculates the center of a bounding sphere around triangle with vertices a, b, c.
-    :param a:
-    :param b:
-    :param c:
-    :return:
+    Calculates the center and radius of a bounding sphere around triangle with vertices a, b, c.
+    :param a: First vertex of triangle
+    :param b: Second vertex of triangle
+    :param c: Third vertex of triangle
+
+    :type a: np.array([np.float64]), 3 x 1
+    :type b: np.array([np.float64]), 3 x 1
+    :type c: np.array([np.float64]), 3 x 1
+
+    :return: center of bounding sphere
+    :return: radius of bounding sphere
+    :rtype: np.array([np.float64]), 3 x 1
+    :rtype: np.float64
     """
     f = (a + b)/2
     u = a - f
@@ -35,6 +43,17 @@ def calcCenterandRadius(a, b, c):
     return q, p
 
 def createBS(vCoords, vInd):
+    """
+    Creates a list of bounding spheres for array of triangles defined with vertex coordinates.
+    :param vCoords: Coordinates of vertices on surface
+    :param vInd: Indices of vertices for each triangle on surface
+
+    :type vCoords: np.array([np.float64]), 3 x N
+    :type vInd: np.array([np.float64]), 3 x M
+
+    :return: A list of bounding spheres around each triangle defined with vertex indices in vInd
+    :rtype: []
+    """
     bs = []
     for i in range (np.shape(vInd)[1]):
         a = vCoords[:, int(vInd[0][i])]

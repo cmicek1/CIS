@@ -4,10 +4,19 @@ import PointCloud as pc
 def readSample(fpath, nA, nB):
     """
     Reads frames of positions of led markers on bodies A and B and creates 2 lists of pointClouds.
-    :param fpath:
-    :param nA:
-    :param nB:
-    :return:
+    :param fpath: Filepath containing sample readings
+    :param nA: number of LED markers on A
+    :param nB: number of LED markers on B
+
+    :type fpath: str
+    :type nA: int
+    :type nB: int
+
+    :return: PointClouds representing positions of LEDs on A in each frame
+    :return: PointClouds representing positions of LEDs on B in each frame
+
+    :rtype: [pc.PointCloud]
+    :rtype: [pc.PointCloud]
     """
     f = open(fpath, 'r')
 
@@ -42,8 +51,16 @@ def bodyDef(fpath):
     """
     Used with input files ProblemX-BodyY.txt to return a PointCloud with the marker positions and another with the
     tip position.
-    :param fpath:
-    :return:
+    :param fpath: path to fine containing definition of rigid body
+    :type fpath: str
+
+    :return: The number of LED markers on the rigid body
+    :return: PointCloud with the positions of the LEDs
+    :return: PointCloud with position of the tip
+
+    :rtype: int
+    :rtype: pc.PointCloud
+    :rtype: pc.PointCloud
     """
     f = open(fpath, 'r')
 
@@ -72,8 +89,8 @@ def meshDef(fpath):
     :param fpath: The file path to the input data.
     :type fpath: str
 
-    :return: vCoords: An array that holds the coordinates of each vertex
-    :return: vIndices: An array that holds the indices of the coordinates of the three vertices for each triangle
+    :return: An array that holds the coordinates of each vertex
+    :return: An array that holds the indices of the coordinates of the three vertices for each triangle
 
     :rtype: np.array(float64) 3 x nNvertices
     :rtype: np.array(int) 3 x nTriangles
