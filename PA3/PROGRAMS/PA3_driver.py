@@ -59,9 +59,7 @@ def tofile(meshfile, bodyA, bodyB, sampleData, outfile):
 
     d_kPoints = icp.findTipB(aFrames, bFrames, ledA, tipA, ledB)
 
-    I = fr.Frame(np.identity(3), np.zeros(3))
-
-    s_i = icp.computeSamplePoints(d_kPoints, I)
+    s_i = icp.computeSamplePoints(d_kPoints, fr.Frame(np.identity(3), np.zeros(3)))
 
     c_kPoints = icp.ICPmatch(s_i, vCoords, vIndices)
 
