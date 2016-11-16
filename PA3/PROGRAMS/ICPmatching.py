@@ -80,8 +80,8 @@ def findClosestPoint(s_i, vCoords, vInd, spheres):
     dist = numalg.norm(s_i - minPoint)
 
     for i in range(1, np.shape(vInd)[1]):
-        if(numalg.norm(s_i - spheres[i].c) - spheres[i].r < numalg.norm(s_i - minPoint)):
-            #check carefully
+        if numalg.norm(s_i - spheres[i].c) - spheres[i].r < numalg.norm(s_i - minPoint):
+            # check carefully
             p = vCoords[:, int(vInd[0][i])]
             q = vCoords[:, int(vInd[1][i])]
             r = vCoords[:, int(vInd[2][i])]
@@ -90,7 +90,7 @@ def findClosestPoint(s_i, vCoords, vInd, spheres):
 
             d = numalg.norm(s_i - c_star)
 
-            if (d < dist):
+            if d < dist:
                 dist = d
                 minPoint = c_star
 
@@ -165,7 +165,7 @@ def ICPmatch(s_i, vCoords, vInd, linear=False):
     :param vCoords: Coordinates of each vertex on surface
     :param vInd: Indices of vertices for each triangle on surface
 
-    :type s_i: np.array([np.float64]) 3 x 1
+    :type s_i: PointCloud.PointCloud
     :type vCoords: np.array([np.float64]) 3 x N
     :type vInd: np.array([np.float64]) 3 x M
 
