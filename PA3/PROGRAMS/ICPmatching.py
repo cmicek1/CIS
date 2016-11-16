@@ -44,7 +44,7 @@ def computeSamplePoints(d_k, freg):
     :param freg: Frame transformation
 
     :type d_k: pc.PointCloud
-    :type freg: Frame
+    :type freg: Frame.Frame
 
     :return: d_k: Transformed array of points
     :rtype: pc.PointCloud
