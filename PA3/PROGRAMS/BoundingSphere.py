@@ -2,7 +2,9 @@ import numpy as np
 import numpy.linalg as numalg
 
 class BoundingSphere:
-
+    """
+    Class representing a bounding sphere around a triangle.
+    """
     def __init__(self, c, r):
         """
         Initialize sphere with given center and radius.

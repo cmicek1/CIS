@@ -9,7 +9,6 @@ import testICP as test
 def main():
     """
     Main method, takes command line arguments to either run tests or run program with a given data set (x-ddddd).
-    :return:
     """
 
     # Add 'test' command line option
@@ -38,17 +37,22 @@ def main():
     os.chdir("..")
     outname = os.getcwd() + '/OUTPUT/PA3-' + dataset + '-Output.txt'
 
-    # Run code for probelms 4 - 6 and save output
     tofile(surface, bodyA, bodyB, testData, outname)
 
 def tofile(meshfile, bodyA, bodyB, sampleData, outfile):
     """
-    :param meshfile:
-    :param bodyA:
-    :param bodyB:
-    :return:
+    :param meshfile: path to file that defines surface mesh
+    :param bodyA: path to file that defines rigid body A
+    :param bodyB: path to file that defines rigid body B
+    :param sampleData: path to file that contains frames of sample data
+    :param outfile: path to file to write output to
+
+    :type meshfile: str
+    :type bodyA: str
+    :type bodyB: str
+    :type sampleData: str
+    :type outfile: str
     """
-    start_time = time.time()
 
     vCoords, vIndices = icpf.meshDef(meshfile)
 
@@ -66,8 +70,6 @@ def tofile(meshfile, bodyA, bodyB, sampleData, outfile):
     dist = icp.calcDifference(c_kPoints, d_kPoints)
 
     writefile(d_kPoints, c_kPoints, dist, outfile)
-
-    print("--- %s seconds ---" % (time.time() - start_time))
 
 
 def writefile(d_k, c_k, dist, outfile):
