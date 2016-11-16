@@ -1,6 +1,7 @@
 import numpy as np
 import numpy.linalg as numalg
 
+
 class BoundingSphere:
     """
     Class representing a bounding sphere around a triangle.
@@ -44,6 +45,7 @@ def calcCenterandRadius(a, b, c):
     p = numalg.norm(q - a)
     return q, p
 
+
 def createBS(vCoords, vInd):
     """
     Creates a list of bounding spheres for array of triangles defined with vertex coordinates.
@@ -57,7 +59,7 @@ def createBS(vCoords, vInd):
     :rtype: []
     """
     bs = []
-    for i in range (np.shape(vInd)[1]):
+    for i in range(np.shape(vInd)[1]):
         a = vCoords[:, int(vInd[0][i])]
         b = vCoords[:, int(vInd[1][i])]
         c = vCoords[:, int(vInd[2][i])]

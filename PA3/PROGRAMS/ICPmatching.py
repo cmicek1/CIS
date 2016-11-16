@@ -202,6 +202,7 @@ def calcDifference(c_kPoints, d_kPoints):
 
     return dist
 
+
 def findClosestPointLinear(s_i, vCoords, vInd):
     """
     Performs linear search through all triangles to find the closest point on the surface to s_i.

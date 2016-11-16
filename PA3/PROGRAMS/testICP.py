@@ -1,11 +1,12 @@
 import numpy as np
 import PointCloud as pc
 import ICPmatching as icpm
+import BoundingSphere as bs
 
 
 def testFindTipB(tolerance=1e-4):
     """
-    Test finding the tip position of body B from the tip position of the A body. If the generated and calculated
+    Tests finding the tip position of body B from the tip position of the A body. If the generated and calculated
     positions are within tolerance of one another, the test passes.
 
     :param tolerance: The minimum error between created and computed values for the test to pass.
@@ -54,7 +55,7 @@ def testFindTipB(tolerance=1e-4):
 
 def testProjectOnSegment(tolerance=1e-4):
     """
-    Test projection of a point onto a line segment.
+    Tests projection of a point onto a line segment.
 
     :param tolerance: Minimum error between created and calculated result for tests to pass
 
@@ -235,6 +236,15 @@ def testFindClosestPoint(tolerance=1e-4):
 
 
 def testICPMatchLinear(tolerance=1e-4):
+    """
+    Tests ICP using a series of points queried against a generated mesh. Uses a brute-force linear search.
+
+    :param tolerance: Maximum tolerance between expected and calculated results
+
+    :type tolerance: float
+
+    :return: None
+    """
     print('\nComplicated case: Closest points to a mesh of triangles, using slow linear search')
     v_coords = np.array([[0, 2, 0],
                     [1, 2, 3],
@@ -270,7 +280,177 @@ def testICPMatchLinear(tolerance=1e-4):
     print('\nMatch within tolerance?')
     assert np.all(np.abs(v_coords - c_calc.data) <= tolerance)
     print(np.all(np.abs(v_coords - c_calc.data) <= tolerance))
+
+    print('\nTest again, with new points')
+    print('\nPoints to search for:')
+    s = np.zeros((3, 11))
+    s[0, :] = np.arange(0, 11)
+    s[1, :] = 2
+    print(s)
+
+    print('\nExpected points:')
+    print(s)
+
+    print('\nCalculated points:')
+    c_calc = icpm.ICPmatch(pc.PointCloud(s), v_coords, tri_inds, True)
+    print(c_calc.data)
+
+    print('\nMatch within tolerance?')
+    assert np.all(np.abs(s - c_calc.data) <= tolerance)
+    print(np.all(np.abs(s - c_calc.data) <= tolerance))
+
     print('\nLinear ICP tests passed!')
+
+
+def testMakeSphere(tolerance=1e-6):
+    """
+    Tests the proper creation of bounding spheres using known triangles.
+
+    :param tolerance: Maximum tolerance between expected and calculated results
+
+    :type tolerance: float
+
+    :return: None
+    """
+    print('\nTest creation of Bounding Spheres')
+    print('\nCreate equilateral triangle with vertices =')
+    verts = np.array([[0, 1, 2],
+                      [0, np.sqrt(3), 0],
+                      [0, 0, 0]])
+    print(verts)
+    inds = np.array([[0],
+                     [1],
+                     [2]])
+
+    print('\nMake BoundingSphere from triangle.')
+    sp = bs.createBS(verts, inds)
+
+    print('Test if specs are correct')
+    print('Expected center:')
+    c_exp = np.array([1, np.sqrt(3) / 3, 0])
+    print(c_exp)
+    print('Calculated center:')
+    print(sp[0].c)
+    print('Expected radius:')
+    r_exp = np.sqrt(3) * 2 / 3
+    print(r_exp)
+    print('Calculated radius:')
+    print(sp[0].r)
+
+    print('\nCenter within tolerance?')
+    assert np.all(np.abs(c_exp - sp[0].c) <= tolerance)
+    print(np.all(np.abs(c_exp - sp[0].c) <= tolerance))
+
+    print('\nRadius within tolerance?')
+    assert np.all(np.abs(r_exp - sp[0].r) <= tolerance)
+    print(np.all(np.abs(r_exp - sp[0].r) <= tolerance))
+
+    print('\nCreate a right triangle with vertices =')
+    verts = np.array([[0, 2, 0],
+                      [0, 0, 2],
+                      [0, 0, 0]], dtype=np.float64)
+    print(verts)
+    inds = np.array([[0],
+                     [1],
+                     [2]])
+
+    print('\nMake BoundingSphere from triangle.')
+    sp = bs.createBS(verts, inds)
+
+    print('Test if specs are correct')
+    print('Expected center:')
+    c_exp = np.array([1, 1, 0])
+    print(c_exp)
+    print('Calculated center:')
+    print(sp[0].c)
+    print('Expected radius:')
+    r_exp = np.sqrt(2)
+    print(r_exp)
+    print('Calculated radius:')
+    print(sp[0].r)
+
+    print('\nCenter within tolerance?')
+    assert np.all(np.abs(c_exp - sp[0].c) <= tolerance)
+    print(np.all(np.abs(c_exp - sp[0].c) <= tolerance))
+
+    print('\nRadius within tolerance?')
+    assert np.all(np.abs(r_exp - sp[0].r) <= tolerance)
+    print(np.all(np.abs(r_exp - sp[0].r) <= tolerance))
+
+
+def testICPSpherical(tolerance=1e-4):
+    """
+    Tests ICP using a series of points queried against a generated mesh. Compares method using bounding spheres
+    against a brute-force linear search.
+
+    :param tolerance: Maximum tolerance between expected and calculated results
+
+    :type tolerance: float
+
+    :return: None
+    """
+    print('\nLinear case works; compare with bounding spheres:')
+    v_coords = np.array([[0, 2, 0],
+                         [1, 2, 3],
+                         [0, 0, 0]], dtype=np.float64)
+    to_add = np.array([[4, 4, 4],
+                       [0, 0, 0],
+                       [0, 0, 0]], dtype=np.float64)
+    for i in range(2):
+        v_coords = np.hstack((v_coords, v_coords[:, (-3, -2, -1)] + to_add))
+    print('\nVertices:')
+    print(v_coords)
+    tri_inds = np.array([[0, 0, 1, 1],
+                         [1, 1, 2, 3],
+                         [2, 3, 5, 5]], dtype=int)
+    tri_inds = np.hstack((tri_inds, tri_inds + 3 * np.ones((3, 4), dtype=int), np.array([[6], [7], [8]], dtype=int)))
+
+    print('\nTriangle Indices:')
+    print(tri_inds)
+
+    s = v_coords.copy()
+    s[-1, :] += 4
+
+    print('\nPoints to search for:')
+    print(s)
+
+    print('\nExpected points:')
+    print(v_coords)
+
+    print('\nCalculated points (linear):')
+    c_calc1 = icpm.ICPmatch(pc.PointCloud(s), v_coords, tri_inds, True)
+    print(c_calc1.data)
+
+    print('\nCalculated points (spheres):')
+    c_calc2 = icpm.ICPmatch(pc.PointCloud(s), v_coords, tri_inds)
+    print(c_calc2.data)
+
+    print('\nMatch within tolerance?')
+    assert np.all(np.abs(c_calc1.data - c_calc2.data) <= tolerance)
+    print(np.all(np.abs(c_calc1.data - c_calc2.data) <= tolerance))
+
+    print('\nPoints to search for:')
+    s = np.zeros((3, 11))
+    s[0, :] = np.arange(0, 11)
+    s[1, :] = 2
+    print(s)
+
+    print('\nExpected points:')
+    print(s)
+
+    print('\nCalculated points (linear):')
+    c_calc1 = icpm.ICPmatch(pc.PointCloud(s), v_coords, tri_inds, True)
+    print(c_calc1.data)
+
+    print('\nCalculated points (spheres):')
+    c_calc2 = icpm.ICPmatch(pc.PointCloud(s), v_coords, tri_inds)
+    print(c_calc2.data)
+
+    print('\nMatch within tolerance?')
+    assert np.all(np.abs(c_calc1.data - c_calc2.data) <= tolerance)
+    print(np.all(np.abs(c_calc1.data - c_calc2.data) <= tolerance))
+
+    print('\nBounding Sphere ICP tests passed!')
 
 
 def _rotation(angles):
