@@ -141,6 +141,8 @@ def testProjectOnSegment(tolerance=1e-4):
     assert np.all(np.abs(c_exp - c_star) <= tolerance)
     print(np.all(np.abs(c_exp - c_star) <= tolerance))
 
+    print('\nProjection tests passed!')
+
 
 def testFindClosestPoint(tolerance=1e-4):
     """
@@ -163,6 +165,7 @@ def testFindClosestPoint(tolerance=1e-4):
                        [1],
                        [2]], dtype=int)
 
+    print('\Case 1: Point in region over triangle, out of plane')
     print('\nPoint to match: s =')
     s = np.array([2, 2, 2])
     print(s)
@@ -178,6 +181,96 @@ def testFindClosestPoint(tolerance=1e-4):
     print('\nMatch within tolerance?')
     assert np.all(np.abs(c - c_calc) <= tolerance)
     print(np.all(np.abs(c - c_calc) <= tolerance))
+
+    print('\nCase 2: Point outside region over triangle, out of plane')
+    print('\nPoint to match: s =')
+    s = np.array([5, 2, 6])
+    print(s)
+
+    print('Expected point: c =')
+    c = np.array([4, 2, 0])
+    print(c)
+
+    print('Calculated point: c_calc =')
+    c_calc = icpm.findClosestPointLinear(s, v_coords, v_inds)
+    print(c_calc)
+
+    print('\nMatch within tolerance?')
+    assert np.all(np.abs(c - c_calc) <= tolerance)
+    print(np.all(np.abs(c - c_calc) <= tolerance))
+
+    print('\nCase 3: Point inside triangle, in plane')
+    print('\nPoint to match: s =')
+    s = np.array([2.5, 2, 0])
+    print(s)
+
+    print('Expected point: c =')
+    c = np.array([2.5, 2, 0])
+    print(c)
+
+    print('Calculated point: c_calc =')
+    c_calc = icpm.findClosestPointLinear(s, v_coords, v_inds)
+    print(c_calc)
+
+    print('\nMatch within tolerance?')
+    assert np.all(np.abs(c - c_calc) <= tolerance)
+    print(np.all(np.abs(c - c_calc) <= tolerance))
+
+    print('\nCase 4: Point outside triangle, in plane')
+    print('\nPoint to match: s =')
+    s = np.array([-2, 1.5, 0])
+    print(s)
+
+    print('Expected point: c =')
+    c = np.array([0, 1.5, 0])
+    print(c)
+
+    print('Calculated point: c_calc =')
+    c_calc = icpm.findClosestPointLinear(s, v_coords, v_inds)
+    print(c_calc)
+
+    print('\nMatch within tolerance?')
+    assert np.all(np.abs(c - c_calc) <= tolerance)
+    print(np.all(np.abs(c - c_calc) <= tolerance))
+
+
+def testICPMatchLinear(tolerance=1e-4):
+    print('\nComplicated case: Closest points to a mesh of triangles, using slow linear search')
+    v_coords = np.array([[0, 2, 0],
+                    [1, 2, 3],
+                    [0, 0, 0]], dtype=np.float64)
+    to_add = np.array([[4, 4, 4],
+                       [0, 0, 0],
+                       [0, 0, 0]], dtype=np.float64)
+    for i in range(2):
+        v_coords = np.hstack((v_coords, v_coords[:, (-3, -2, -1)] + to_add))
+    print('\nVertices:')
+    print(v_coords)
+    tri_inds = np.array([[0, 0, 1, 1],
+                         [1, 1, 2, 3],
+                         [2, 3, 5, 5]], dtype=int)
+    tri_inds = np.hstack((tri_inds, tri_inds + 3 * np.ones((3, 4), dtype=int), np.array([[6], [7], [8]],dtype=int)))
+
+    print('\nTriangle Indices:')
+    print(tri_inds)
+
+    s = v_coords.copy()
+    s[-1, :] += 4
+
+    print('\nPoints to search for:')
+    print(s)
+
+    print('\nExpected points:')
+    print(v_coords)
+
+    print('\nCalculated points:')
+    c_calc = icpm.ICPmatch(pc.PointCloud(s), v_coords, tri_inds, True)
+    print(c_calc.data)
+
+    print('\nMatch within tolerance?')
+    assert np.all(np.abs(v_coords - c_calc.data) <= tolerance)
+    print(np.all(np.abs(v_coords - c_calc.data) <= tolerance))
+    print('\nLinear ICP tests passed!')
 
 
 def _rotation(angles):

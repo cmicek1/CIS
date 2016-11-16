@@ -126,7 +126,7 @@ def minPointonTriangle(s_i, p, q, r):
     c = p + l * (q - p) + u * (r - p)
     c_star = np.zeros(3)
 
-    if l > 0 and u > 0 and l + u < 1:
+    if l >= 0 and u >= 0 and l + u <= 1:
         c_star = c
     elif l < 0:
         c_star = projectOnSegment(c, r, p)
@@ -158,7 +158,7 @@ def projectOnSegment(c, p, q):
     return c_star
 
 
-def ICPmatch(s_i, vCoords, vInd):
+def ICPmatch(s_i, vCoords, vInd, linear=False):
     """
     Finds the closest point on a given surface for each point in a given PointCloud
     :param s_i: PointCloud of points to find closest point
@@ -175,9 +175,12 @@ def ICPmatch(s_i, vCoords, vInd):
     spheres = bs.createBS(vCoords, vInd)
     c_ij = np.zeros([3, np.shape(s_i.data)[1]])
     for i in range(np.shape(s_i.data)[1]):
-        c = findClosestPoint(s_i.data[:,i], vCoords, vInd, spheres)
-        c_ij[:, i] = c[:]
-
+        if not linear:
+            c = findClosestPoint(s_i.data[:,i], vCoords, vInd, spheres)
+            c_ij[:, i] = c[:]
+        else:
+            c = findClosestPointLinear(s_i.data[:, i], vCoords, vInd)
+            c_ij[:, i] = c[:]
     return pc.PointCloud(c_ij)
 
 
@@ -234,7 +237,7 @@ def findClosestPointLinear(s_i, vCoords, vInd):
         c = p + l * (q - p) + u * (r - p)
         c_star = np.zeros(3)
 
-        if l > 0 and u > 0 and l + u < 1:
+        if l >= 0 and u >= 0 and l + u <= 1:
             c_star = c
         elif l < 0:
             c_star = projectOnSegment(c, r, p)

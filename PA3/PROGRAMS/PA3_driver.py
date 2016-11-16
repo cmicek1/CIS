@@ -19,11 +19,15 @@ def main():
             test.testFindTipB(tolerance)
             test.testProjectOnSegment(tolerance)
             test.testFindClosestPoint(tolerance)
+            test.testICPMatchLinear(tolerance)
         else:
             # run tests with no given tolerance
             test.testFindTipB()
             test.testProjectOnSegment()
             test.testFindClosestPoint()
+            test.testICPMatchLinear()
+
+        print('\nAll tests passed!')
         sys.exit(0)
 
     # Parse arguments for regular execution
