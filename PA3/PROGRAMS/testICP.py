@@ -18,7 +18,7 @@ def testFindTipB(tolerance=1e-4):
 
     print('Testing registration of pointer tip wrt body B...')
 
-    print('Generate random A_tip, and A_k, B_k points')
+    print('Generate random A_tip, and A_i, B_i points')
     angles1 = np.random.uniform(0, 2 * np.pi, (3,))
     angles2 = np.random.uniform(0, 2 * np.pi, (3,))
 
@@ -36,7 +36,7 @@ def testFindTipB(tolerance=1e-4):
     a_frames = r1.dot(a_led) + p1
     b_frames = r2.dot(b_led) + p2
 
-    print('Generate random transformations to a_k and b_k, and generate d_k for one frame')
+    print('Generate random transformations to a_i,k and b_i,k, and generate d_k for one frame')
     print('\nd_k =')
     d_k = np.linalg.inv(r2).dot(r1).dot(a_tip) + np.linalg.inv(r2).dot(p1 - p2)
     print(d_k)
