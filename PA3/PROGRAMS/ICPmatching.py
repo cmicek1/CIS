@@ -176,10 +176,10 @@ def ICPmatch(s_i, vCoords, vInd, linear=False):
     c_ij = np.zeros([3, np.shape(s_i.data)[1]])
     for i in range(np.shape(s_i.data)[1]):
         if not linear:
-            c = findClosestPointLinear(s_i.data[:, i], vCoords, vInd)
+            c = findClosestPoint(s_i.data[:,i], vCoords, vInd, spheres)
             c_ij[:, i] = c[:]
         else:
-            c = findClosestPoint(s_i.data[:, i], vCoords, vInd, spheres)
+            c = findClosestPointLinear(s_i.data[:, i], vCoords, vInd)
             c_ij[:, i] = c[:]
     return pc.PointCloud(c_ij)
 
