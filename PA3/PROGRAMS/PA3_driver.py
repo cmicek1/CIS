@@ -73,6 +73,17 @@ def tofile(meshfile, bodyA, bodyB, sampleData, outfile):
 
 
 def writefile(d_k, c_k, dist, outfile):
+    """
+    :param d_k: Position of tip in each frame
+    :param c_k: Closest point on surface to tip in each frame
+    :param dist: list of distances between tip and surface
+    :param outfile: path to file to write output to
+
+    :type d_k: pc.PointCloud
+    :type c_k: pc.PointCloud
+    :type dist: np.array([np.float64]) 1 x N
+    :type outfile: str
+    """
     f = open(outfile, 'w')
     h, t = os.path.split(outfile)
 
