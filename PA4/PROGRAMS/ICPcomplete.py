@@ -39,7 +39,7 @@ def iterativeFramePointFinder(vCoords, vIndices, d_kPoints):
 
     nIters = 0
 
-    while ((not isClose()) and (nIters < 5)):
+    while ((not isClose()) and (nIters < 1)):
 
         s_i = d_kPoints.transform(F_reg)
 
