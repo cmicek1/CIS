@@ -37,24 +37,6 @@ def findTipB(aFrames, bFrames, ledA, tipA, ledB):
     return pc.PointCloud(d_ks)
 
 
-def computeSamplePoints(d_k, freg):
-    """
-    Transforms tip points with given transformation.
-    :param d_k: Array containing positions of tip with respect to rigid body B
-    :param freg: Frame transformation
-
-    :type d_k: pc.PointCloud
-    :type freg: Frame.Frame
-
-    :return: d_k: Transformed array of points
-    :rtype: pc.PointCloud
-    """
-    for i in range(np.shape(d_k.data)[1]):
-        d_k.data[:, i] = freg.r.dot(d_k.data[:, i]).T + freg.p
-
-    return d_k
-
-
 def findClosestPoint(s_i, vCoords, vInd, spheres):
     """
     Finds the closest point to s_i on a mesh defined by vCoords (coordinates of vertices) and vInd (vertex indices for

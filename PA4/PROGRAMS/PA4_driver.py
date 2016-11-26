@@ -1,10 +1,9 @@
-import ICPfilereading as icpf
-import ICPmatching as icp
-import Frame as fr
 import numpy as np
 import sys, os
 import time
 import testICP as test
+import ICPcomplete as icp
+import ICPmatching as icpm
 
 
 def main():
@@ -69,20 +68,7 @@ def tofile(meshfile, bodyA, bodyB, sampleData, outfile):
     :type outfile: str
     """
 
-    vCoords, vIndices = icpf.meshDef(meshfile)
-
-    nledA, ledA, tipA = icpf.bodyDef(bodyA)
-    nledB, ledB, tipB = icpf.bodyDef(bodyB)
-
-    aFrames, bFrames = icpf.readSample(sampleData, nledA, nledB)
-
-    d_kPoints = icp.findTipB(aFrames, bFrames, ledA, tipA, ledB)
-
-    s_i = icp.computeSamplePoints(d_kPoints, fr.Frame(np.identity(3), np.zeros(3)))
-
-    c_kPoints = icp.ICPmatch(s_i, vCoords, vIndices)
-
-    dist = icp.calcDifference(c_kPoints, d_kPoints)
+    d_kPoints, c_kPoints, dist = icp.completeICP(meshfile, bodyA, bodyB, sampleData)
 
     writefile(d_kPoints, c_kPoints, dist, outfile)
 
