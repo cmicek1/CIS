@@ -11,6 +11,8 @@ def main():
     Main method, takes command line arguments to either run tests or run program with a given data set (x-ddddd).
     """
 
+    stime = time.time()
+
     # Add 'test' command line option
     if str(sys.argv[1]) == 'test':
         if len(sys.argv) == 3:
@@ -49,6 +51,8 @@ def main():
 
     tofile(surface, bodyA, bodyB, testData, outname)
 
+    print "time = " + (time.time() - stime)
+
 def tofile(meshfile, bodyA, bodyB, sampleData, outfile):
     """
     :param meshfile: path to file that defines surface mesh
@@ -63,7 +67,6 @@ def tofile(meshfile, bodyA, bodyB, sampleData, outfile):
     :type sampleData: str
     :type outfile: str
     """
-
     vCoords, vIndices = icpf.meshDef(meshfile)
 
     nledA, ledA, tipA = icpf.bodyDef(bodyA)

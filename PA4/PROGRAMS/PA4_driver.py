@@ -12,6 +12,8 @@ def main():
     Main method, takes command line arguments to either run tests or run program with a given data set (x-ddddd).
     """
 
+    stime = time.time()
+
     # Add 'test' command line option
     if str(sys.argv[1]) == 'test':
         if len(sys.argv) == 3:
@@ -41,14 +43,16 @@ def main():
     directory = sys.argv[1]
     dataset = sys.argv[2]
 
-    surface = os.getcwd() + directory + '/Problem3MeshFile.sur'
-    bodyA = os.getcwd() + directory + '/Problem3-BodyA.txt'
-    bodyB = os.getcwd() + directory + '/Problem3-BodyB.txt'
-    testData = os.getcwd() + directory + '/PA3-' + dataset + '-SampleReadingsTest.txt'
+    surface = os.getcwd() + directory + '/Problem4MeshFile.sur'
+    bodyA = os.getcwd() + directory + '/Problem4-BodyA.txt'
+    bodyB = os.getcwd() + directory + '/Problem4-BodyB.txt'
+    testData = os.getcwd() + directory + '/PA4-' + dataset + '-SampleReadingsTest.txt'
     os.chdir("..")
-    outname = os.getcwd() + '/OUTPUT/PA3-' + dataset + '-Output.txt'
+    outname = os.getcwd() + '/OUTPUT/PA4-' + dataset + '-Output.txt'
 
     tofile(surface, bodyA, bodyB, testData, outname)
+
+    print "runtime = " + str(time.time() - stime)
 
 def tofile(meshfile, bodyA, bodyB, sampleData, outfile):
     """
