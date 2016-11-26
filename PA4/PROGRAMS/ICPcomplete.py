@@ -26,7 +26,7 @@ def completeICP(meshfile, bodyA, bodyB, sampleData):
 
     d_kPoints = icpm.findTipB(aFrames, bFrames, ledA, tipA, ledB)
 
-    c_kPoints = iterativeFramePointFinder(vCoords, vIndices, aFrames, bFrames, ledA, tipA, ledB, d_kPoints)
+    c_kPoints = iterativeFramePointFinder(vCoords, vIndices, d_kPoints)
 
     dist = icpm.calcDifference(c_kPoints, d_kPoints)
 
@@ -42,9 +42,10 @@ def iterativeFramePointFinder(vCoords, vIndices, d_kPoints):
     while ((not isClose()) and (nIters < 5)):
 
         s_i = d_kPoints.transform(F_reg)
+
         c_kPoints = icpm.ICPmatch(s_i, vCoords, vIndices)
 
-        deltaF_reg = c_kPoints.register(d_kPoints)
+        deltaF_reg = s_i.register(c_kPoints)
 
         F_reg = deltaF_reg.compose(F_reg)
 
