@@ -6,6 +6,7 @@ import sys, os
 import time
 import testICP as test
 
+
 def main():
     """
     Main method, takes command line arguments to either run tests or run program with a given data set (x-ddddd).
