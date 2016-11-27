@@ -5,11 +5,12 @@ import PointCloud as pc
 
 class CovTreeNode:
     def __init__(self, triangles, num_tri):
-        self.triangle_list = triangles
+        self.triangle_list = np.array(triangles)
         self.num_tri = num_tri
         self.frame = self._FindCovFrame()
         self.has_subtrees = False
         self.subtrees = [None, None]
+        self._ConstructSubtrees()
 
     def _FindCovFrame(self, *args):
         if len(args) == 1:
@@ -56,9 +57,16 @@ class CovTreeNode:
             points.append(pc.PointCloud(self.triangle_list[k].SortPoint()).transform(self.frame.inv).data.tolist())
         points = np.array(points).squeeze().T
         inds = np.argsort(points[0, :])
+        points = points[inds]
+        self.triangle_list = self.triangle_list[inds]
 
+        return np.where(np.diff(np.signbit(points[0, :])))[0]
 
     def _ConstructSubtrees(self):
         if len(self.triangle_list) <= 1:
             return
 
+        self.has_subtrees = True
+        splitpoint = self._SplitSort(self.num_tri)
+        self.subtrees[0] = CovTreeNode(self.triangle_list[0], splitpoint)
+        self.subtrees[1] = CovTreeNode(self.triangle_list[splitpoint], self.num_tri - splitpoint)
