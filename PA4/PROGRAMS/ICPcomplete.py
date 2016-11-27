@@ -37,7 +37,6 @@ def completeICP(meshfile, bodyA, bodyB, sampleData):
 def iterativeFramePointFinder(vCoords, vIndices, d_kPoints):
 
     F_reg = fr.Frame(np.identity(3), np.zeros([3, 1]))
-    F_regNew = fr.Frame(np.zeros([3, 3]), np.zeros([3, 1]))
 
     nIters = 0
 
