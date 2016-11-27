@@ -2,6 +2,7 @@ import numpy as np
 import ICPmatching as icpm
 import ICPfilereading as icpf
 import Frame as fr
+import math
 import PointCloud as pc
 
 def completeICP(meshfile, bodyA, bodyB, sampleData):
@@ -36,10 +37,11 @@ def completeICP(meshfile, bodyA, bodyB, sampleData):
 def iterativeFramePointFinder(vCoords, vIndices, d_kPoints):
 
     F_reg = fr.Frame(np.identity(3), np.zeros([3, 1]))
+    F_regNew = fr.Frame(np.zeros([3, 3]), np.zeros([3, 1]))
 
     nIters = 0
 
-    while ((not isClose()) and (nIters < 1)):
+    while (nIters < 100):
 
         s_i = d_kPoints.transform(F_reg)
 
@@ -47,11 +49,26 @@ def iterativeFramePointFinder(vCoords, vIndices, d_kPoints):
 
         deltaF_reg = s_i.register(c_kPoints)
 
-        F_reg = deltaF_reg.compose(F_reg)
+        F_regNew = deltaF_reg.compose(F_reg)
+
+        if(isClose(.000000001, F_reg, F_regNew)):
+            return c_kPoints
+
+        F_reg = F_regNew
 
         nIters += 1
 
     return c_kPoints
 
-def isClose():
+def isClose(tolerance, F_reg, F_regNew):
+    err = 0
+    for i in range(0, 3):
+        err += math.pow(F_reg.p[i] - F_regNew.p[i], 2)
+        for j in range(0, 3):
+            err += math.pow(F_reg.r[i][j] - F_regNew.r[i][j], 2)
+
+    print err
+    if err < tolerance:
+        return True;
     return False
+
