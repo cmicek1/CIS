@@ -12,9 +12,9 @@ class CovTreeNode:
         self.subtrees = [None, None]
 
     def _FindCovFrame(self, *args):
-        if len(args) == 2:
+        if len(args) == 1:
             points = []
-            num_points = args[1]
+            num_points = args[0]
             for i in range(num_points):
                 points.append(self.triangle_list[i].data.tolist())
 
@@ -22,8 +22,8 @@ class CovTreeNode:
 
             return self._FindCovFrame(points, num_points)
 
-        elif len(args) == 3:
-            points = args[1][:, 0:args[2] + 1]
+        elif len(args) == 2:
+            points = args[0][:, 0:args[1] + 1]
             c = np.mean(points, axis=1, keepdims=True)
             u = points - c
 
