@@ -109,7 +109,7 @@ def meshDef(fpath):
 
     nTriangles = int(f.readline())
 
-    vIndices = np.zeros([3, nTriangles])
+    vIndices = np.zeros([3, nTriangles], dtype=int)
 
     for i in range(nTriangles):
         triangle = f.readline().split()

@@ -9,7 +9,7 @@ class CovTreeNode:
         self.triangle_list = triangles
         self.num_tri = num_tri
         self.bounds = None
-        self.frame = self._FindCovFrame()
+        self.frame = self._FindCovFrame(self.num_tri)
         self.has_subtrees = False
         self.subtrees = [None, None]
         self._ConstructSubtrees()
@@ -37,17 +37,21 @@ class CovTreeNode:
 
     def _FindCovFrame(self, *args):
         if len(args) == 1:
-            points = []
-            num_points = args[0]
-            for i in range(num_points):
-                points.append(self.triangle_list[i].data.tolist())
+            points = None
+            num_triangles = args[0]
+            for i in range(num_triangles):
+                if i == 0:
+                    points = self.triangle_list[i].corners.data.tolist()
+                else:
+                    for p in self.triangle_list[i].corners.data.tolist():
+                        points.append(p)
 
             points = np.array(points).squeeze().T
 
-            return self._FindCovFrame(points, num_points)
+            return self._FindCovFrame(points, num_triangles * 3)
 
         elif len(args) == 2:
-            points = args[0][:, 0:args[1] + 1]
+            points = args[0][:, 0:args[1]]
             c = np.mean(points, axis=1, keepdims=True)
             u = points - c
 
@@ -60,9 +64,9 @@ class CovTreeNode:
             max_evec = evecs[inds[0]]
 
             coeffs = np.zeros((3, 9))
-            coeffs[[0, 0], [1, 3], [2, 6]] = 1.0
+            coeffs[(0, 1, 2), (0, 3, 6)] = 1.0
 
-            r = np.linalg.lstsq(coeffs, max_evec)
+            r = np.linalg.lstsq(coeffs, max_evec)[0].reshape((3, 3))
 
             return fr.Frame(r, c)
 

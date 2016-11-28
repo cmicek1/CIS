@@ -85,7 +85,7 @@ def writefile(d_k, c_k, dist, outfile):
     :type dist: np.array([np.float64]) 1 x N
     :type outfile: str
     """
-    f = open(outfile, 'w')
+    f = open(outfile, 'w+')
     h, t = os.path.split(outfile)
 
     d_k = d_k.data

@@ -4,6 +4,8 @@ import ICPfilereading as icpf
 import Frame as fr
 import math
 import PointCloud as pc
+import Triangle as tr
+import CovTreeNode as ctn
 
 def completeICP(meshfile, bodyA, bodyB, sampleData):
     """
@@ -40,6 +42,14 @@ def iterativeFramePointFinder(vCoords, vIndices, d_kPoints):
     F_reg = fr.Frame(np.identity(3), np.zeros([3, 1]))
 
     nIters = 0
+
+    triangles = []
+
+    for i in range(vIndices.shape[1]):
+        t = tr.Triangle(pc.PointCloud(vCoords[:, vIndices[:, i].flatten()]))
+        triangles.append(t)
+
+    tree = ctn.CovTreeNode(triangles, vIndices.shape[1])
 
     while (nIters < 100):
 
