@@ -91,10 +91,12 @@ class CovTreeNode:
             points.append(pc.PointCloud(self.triangle_list[k].SortPoint()).transform(self.frame.inv).data.tolist())
         points = np.array(points).squeeze().T
         inds = np.argsort(points[0, :])
-        points = points[inds]
+        points = points[:, inds]
         self.triangle_list = self.triangle_list[inds]
 
-        return np.where(np.diff(np.signbit(points[0, :])))[0]
+        possible_splits = np.any(np.diff(np.signbit(points[0, :])))
+        if possible_splits:
+            return np.where(np.diff(np.signbit(points[0, :])))[0][0]
 
     def _ConstructSubtrees(self):
         if len(self.triangle_list) <= 1:
@@ -102,5 +104,13 @@ class CovTreeNode:
 
         self.has_subtrees = True
         splitpoint = self._SplitSort(self.num_tri)
-        self.subtrees[0] = CovTreeNode(self.triangle_list[0:splitpoint], splitpoint)
-        self.subtrees[1] = CovTreeNode(self.triangle_list[splitpoint:self.num_tri], self.num_tri - splitpoint)
+        if splitpoint is not None:
+            if splitpoint == 0:
+                return
+
+            elif splitpoint == self.num_tri:
+                return
+
+            else:
+                self.subtrees[0] = CovTreeNode(self.triangle_list[0:splitpoint], splitpoint)
+                self.subtrees[1] = CovTreeNode(self.triangle_list[splitpoint:self.num_tri], self.num_tri - splitpoint)

@@ -49,6 +49,8 @@ def iterativeFramePointFinder(vCoords, vIndices, d_kPoints):
         t = tr.Triangle(pc.PointCloud(vCoords[:, vIndices[:, i].flatten()]))
         triangles.append(t)
 
+    triangles = np.array(triangles)
+
     tree = ctn.CovTreeNode(triangles, vIndices.shape[1])
 
     while (nIters < 100):
