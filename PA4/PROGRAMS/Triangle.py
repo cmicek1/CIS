@@ -1,4 +1,5 @@
 import numpy as np
+import ICPmatching as icpm
 
 
 class Triangle:
@@ -7,6 +8,11 @@ class Triangle:
 
     def SortPoint(self):
         return np.mean(self.corners.data, axis=1, keepdims=True)
+
+    def ClosestPointTo(self, v):
+        data = self.corners.data
+        p, q, r = data[:, 0], data[:, 1], data[:, 2]
+        return icpm.minPointonTriangle(v, p, q, r)
 
     def EnlargeBounds(self, frame, bounds):
         FiC = frame.inv.transform(self.corners)
