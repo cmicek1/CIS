@@ -15,10 +15,10 @@ class Triangle:
         return icpm.minPointonTriangle(v, p, q, r)
 
     def EnlargeBounds(self, frame, bounds):
-        FiC = frame.inv.transform(self.corners)
+        FiC = self.corners.transform(frame.inv)
         for i in range(3):
-            bounds[0] = np.amin(np.hstack((bounds[0], FiC.data[:, i])), axis=1, keepdims=True)
-            bounds[1] = np.amax(np.hstack((bounds[1], FiC.data[:, i])), axis=1, keepdims=True)
+            bounds[0] = np.amin(np.hstack((bounds[0], FiC.data[:, i].reshape((3, 1)))), axis=1, keepdims=True)
+            bounds[1] = np.amax(np.hstack((bounds[1], FiC.data[:, i].reshape((3, 1)))), axis=1, keepdims=True)
 
         return bounds
 

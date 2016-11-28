@@ -14,6 +14,7 @@ class CovTreeNode:
         self.has_subtrees = False
         self.subtrees = [None, None]
         self._ConstructSubtrees()
+        self._FindBoundingBox(self.num_tri)
 
     def UpdateClosest(self, t, v, bound, closest):
         cp = t.ClosestPointTo(v)
@@ -78,7 +79,7 @@ class CovTreeNode:
             return fr.Frame(r, c)
 
     def _FindBoundingBox(self, n):
-        LB = pc.PointCloud(self.triangle_list[0].SortPoint()).transform(self.frame.inv)
+        LB = pc.PointCloud(self.triangle_list[0].SortPoint()).transform(self.frame.inv).data
         bounds = [LB, LB]
         for k in range(n):
             bounds = self.triangle_list[k].EnlargeBounds(self.frame, bounds)
@@ -102,7 +103,6 @@ class CovTreeNode:
         if len(self.triangle_list) <= 1:
             return
 
-        self.has_subtrees = True
         splitpoint = self._SplitSort(self.num_tri)
         if splitpoint is not None:
             if splitpoint == 0:
@@ -112,5 +112,6 @@ class CovTreeNode:
                 return
 
             else:
+                self.has_subtrees = True
                 self.subtrees[0] = CovTreeNode(self.triangle_list[0:splitpoint], splitpoint)
                 self.subtrees[1] = CovTreeNode(self.triangle_list[splitpoint:self.num_tri], self.num_tri - splitpoint)
