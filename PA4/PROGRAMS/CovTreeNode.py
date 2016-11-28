@@ -1,4 +1,5 @@
 import numpy as np
+import scipy.linalg as scialg
 import Frame as fr
 import PointCloud as pc
 
@@ -67,6 +68,12 @@ class CovTreeNode:
             coeffs[(0, 1, 2), (0, 3, 6)] = 1.0
 
             r = np.linalg.lstsq(coeffs, max_evec)[0].reshape((3, 3))
+            u, s, v = np.linalg.svd(r)
+
+            correction = np.eye(3)
+            correction[-1, -1] = scialg.det(v.T.dot(u.T))
+
+            r = u.dot(correction.dot(v))
 
             return fr.Frame(r, c)
 
