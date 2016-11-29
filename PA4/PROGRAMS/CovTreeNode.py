@@ -21,16 +21,19 @@ class CovTreeNode:
             return bound, closest
         # Here closest is a one-element list
         cp = t.ClosestPointTo(v)
+        # if np.all(np.abs(cp - v) < 0.2):
+        #     print 'Eureka!'
         dist = np.linalg.norm(cp - v)
-        if dist < bound:
-            bound = dist
+        if dist < bound[0]:
+            bound[0] = dist
             closest[0] = cp
         return bound, closest
 
     def FindClosestPoint(self, v, bound, closest):
-        # Note: To pass by reference, closest should be a mutable type (e.g. a list)
-        if np.any(v < (self.bounds[0] - bound)) or np.any(v > (self.bounds[1] + bound)):
-            return
+        # temp = (self.frame.inv.r.dot(v.reshape((3, 1))) + self.frame.inv.p).flatten()
+        # # Note: To pass by reference, closest should be a mutable type (e.g. a list)
+        # if np.any(temp < (self.bounds[0] - bound[0])) or np.any(temp > (self.bounds[1] + bound[0])):
+        #     return
 
         if self.has_subtrees:
             self.subtrees[0].FindClosestPoint(v, bound, closest)
@@ -39,6 +42,7 @@ class CovTreeNode:
         else:
             for i in range(self.num_tri):
                 bound, closest = self.UpdateClosest(self.triangle_list[i], v, bound, closest)
+        # print closest
 
     def _FindCovFrame(self, *args):
         if len(args) == 1:

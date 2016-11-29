@@ -63,15 +63,19 @@ def iterativeFramePointFinder(vCoords, vIndices, d_kPoints):
         s_i = d_kPoints.transform(F_reg)
 
         if nIters == 0:
-            old_pts = s_i
+            temp = np.zeros(s_i.data.shape)
+            temp.fill(np.inf)
+            old_pts = pc.PointCloud(temp)
 
-        c_kPoints = icpm.ICPmatch(s_i, vCoords, vIndices, tree=tree, oldpts=old_pts)
+        c_kPoints = icpm.ICPmatch(s_i, vCoords, vIndices, spheres=None, tree=tree, oldpts=old_pts)
+
+        old_pts = s_i
 
         deltaF_reg = s_i.register(c_kPoints)
 
         F_regNew = deltaF_reg.compose(F_reg)
 
-        if(isClose(.0000000001, F_reg, F_regNew)):
+        if isClose(.0000000001, F_reg, F_regNew):
             return c_kPoints, F_reg
 
         F_reg = F_regNew
