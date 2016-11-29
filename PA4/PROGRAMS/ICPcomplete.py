@@ -54,11 +54,11 @@ def iterativeFramePointFinder(vCoords, vIndices, d_kPoints):
 
     tree = ctn.CovTreeNode(triangles, vIndices.shape[1])
 
-    # spheres = bs.createBS(vCoords, vIndices)
+    spheres = bs.createBS(vCoords, vIndices)
 
     old_pts = None
 
-    while (nIters < 100):
+    while (nIters < 10):
 
         s_i = d_kPoints.transform(F_reg)
 
@@ -67,7 +67,7 @@ def iterativeFramePointFinder(vCoords, vIndices, d_kPoints):
             temp.fill(np.inf)
             old_pts = pc.PointCloud(temp)
 
-        c_kPoints = icpm.ICPmatch(s_i, vCoords, vIndices, spheres=None, tree=tree, oldpts=old_pts)
+        c_kPoints = icpm.ICPmatch(s_i, vCoords, vIndices, spheres=spheres, tree=None, oldpts=old_pts, usetree=False)
 
         # old_pts = s_i
 
