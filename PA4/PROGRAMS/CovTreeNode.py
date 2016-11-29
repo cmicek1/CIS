@@ -30,7 +30,6 @@ class CovTreeNode:
         return bound, closest
 
     def FindClosestPoint(self, v, bound, closest):
-
         temp = (self.frame.inv.r.dot(v.reshape((3, 1))) + self.frame.inv.p).flatten()
         # Note: To pass by reference, closest should be a mutable type (e.g. a list)
         if np.any(temp < (self.bounds[0] - bound[0])) or np.any(temp > (self.bounds[1] + bound[0])):
@@ -101,7 +100,7 @@ class CovTreeNode:
         points = np.array(points).squeeze().T
         inds = np.argsort(points[0, :])
         points = points[:, inds]
-        self.triangle_list = self.triangle_list[inds]
+        # self.triangle_list = self.triangle_list[inds]
 
         possible_splits = np.any(np.diff(np.signbit(points[0, :])))
         if possible_splits:
