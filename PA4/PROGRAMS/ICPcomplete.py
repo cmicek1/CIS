@@ -7,6 +7,7 @@ import PointCloud as pc
 import BoundingSphere as bs
 import Triangle as tr
 import CovTreeNode as ctn
+import BoundingBoxTreeNode as bb
 
 def completeICP(meshfile, bodyA, bodyB, sampleData):
     """
@@ -56,16 +57,19 @@ def iterativeFramePointFinder(vCoords, vIndices, d_kPoints):
 
     spheres = bs.createBS(vCoords, vIndices)
 
+ #   bbtree = bb.BoundingBoxTreeNode(triangles, len(triangles))
+
     old_pts = None
 
-    while (nIters < 10):
+    while (nIters < 100):
 
         s_i = d_kPoints.transform(F_reg)
 
         if nIters == 0:
-            temp = np.zeros(s_i.data.shape)
-            temp.fill(np.inf)
-            old_pts = pc.PointCloud(temp)
+       #     temp = np.zeros(s_i.data.shape)
+       #     temp.fill(np.inf)
+       #     old_pts = pc.PointCloud(temp)
+            old_pts = s_i
 
         c_kPoints = icpm.ICPmatch(s_i, vCoords, vIndices, spheres=spheres, tree=tree, oldpts=old_pts, usetree=True)
 
@@ -75,7 +79,7 @@ def iterativeFramePointFinder(vCoords, vIndices, d_kPoints):
 
         F_regNew = deltaF_reg.compose(F_reg)
 
-        if isClose(.0000000001, F_reg, F_regNew):
+        if isClose(.000001, F_reg, F_regNew):
             return c_kPoints, F_reg
 
         F_reg = F_regNew

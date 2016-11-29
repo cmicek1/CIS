@@ -62,9 +62,6 @@ def findClosestPoint(s_i, vCoords, vInd, spheres):
     minPoint = minPointonTriangle(s_i, p, q, r)
     dist = numalg.norm(s_i - minPoint)
 
-    bbtree = bb.BoundingBoxTreeNode(spheres, len(spheres))
-    bb.splitSort(bbtree.center, spheres)
-
     for i in range(1, np.shape(vInd)[1]):
         if numalg.norm(s_i - spheres[i].c) - spheres[i].r < numalg.norm(s_i - minPoint):
             # check carefully

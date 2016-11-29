@@ -19,6 +19,7 @@ class BoundingSphere:
         self.c = c
         self.r = r
 
+
 def calcCenterandRadius(a, b, c):
     """
     Calculates the center and radius of a bounding sphere around triangle with vertices a, b, c.
