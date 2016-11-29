@@ -4,6 +4,7 @@ import ICPfilereading as icpf
 import Frame as fr
 import math
 import PointCloud as pc
+import BoundingSphere as bs
 import Triangle as tr
 import CovTreeNode as ctn
 
@@ -53,11 +54,18 @@ def iterativeFramePointFinder(vCoords, vIndices, d_kPoints):
 
     tree = ctn.CovTreeNode(triangles, vIndices.shape[1])
 
+    spheres = bs.createBS(vCoords, vIndices)
+
+    old_pts = None
+
     while (nIters < 100):
 
         s_i = d_kPoints.transform(F_reg)
 
-        c_kPoints = icpm.ICPmatch(s_i, vCoords, vIndices)
+        if nIters == 0:
+            old_pts = s_i
+
+        c_kPoints = icpm.ICPmatch(s_i, vCoords, vIndices, spheres, tree)
 
         deltaF_reg = s_i.register(c_kPoints)
 

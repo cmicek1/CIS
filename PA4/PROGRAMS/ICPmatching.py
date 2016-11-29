@@ -140,7 +140,7 @@ def projectOnSegment(c, p, q):
     return c_star
 
 
-def ICPmatch(s_i, vCoords, vInd, linear=False):
+def ICPmatch(s_i, vCoords, vInd, spheres, tree=None, linear=False, usetree=True):
     """
     Finds the closest point on a given surface for each point in a given PointCloud
     :param s_i: PointCloud of points to find closest point
@@ -154,7 +154,6 @@ def ICPmatch(s_i, vCoords, vInd, linear=False):
     :return: closest point on surface to each point in s_i
     :rtype: pc.PointCloud
     """
-    spheres = bs.createBS(vCoords, vInd)
     c_ij = np.zeros([3, np.shape(s_i.data)[1]])
     for i in range(np.shape(s_i.data)[1]):
         if not linear:

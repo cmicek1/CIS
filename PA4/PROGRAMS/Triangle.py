@@ -1,10 +1,15 @@
 import numpy as np
+import BoundingSphere as bs
 import ICPmatching as icpm
 
 
 class Triangle:
     def __init__(self, corners):
         self.corners = corners
+        data = self.corners.data
+        p, q, r = data[:, 0], data[:, 1], data[:, 2]
+        q, r = bs.calcCenterandRadius(p, q, r)
+        self.sphere = bs.BoundingSphere(q, r)
 
     def SortPoint(self):
         return np.mean(self.corners.data, axis=1, keepdims=True)
