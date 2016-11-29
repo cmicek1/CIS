@@ -69,7 +69,7 @@ def iterativeFramePointFinder(vCoords, vIndices, d_kPoints):
 
         c_kPoints = icpm.ICPmatch(s_i, vCoords, vIndices, spheres=None, tree=tree, oldpts=old_pts)
 
-        old_pts = s_i
+        # old_pts = s_i
 
         deltaF_reg = s_i.register(c_kPoints)
 
