@@ -140,7 +140,7 @@ def projectOnSegment(c, p, q):
     return c_star
 
 
-def ICPmatch(s_i, vCoords, vInd, spheres, tree=None, linear=False, usetree=True):
+def ICPmatch(s_i, vCoords, vInd, spheres=None, tree=None, oldpts=None, linear=False, usetree=True):
     """
     Finds the closest point on a given surface for each point in a given PointCloud
     :param s_i: PointCloud of points to find closest point
@@ -155,12 +155,23 @@ def ICPmatch(s_i, vCoords, vInd, spheres, tree=None, linear=False, usetree=True)
     :rtype: pc.PointCloud
     """
     c_ij = np.zeros([3, np.shape(s_i.data)[1]])
+    old = None
+    closest_pts = None
+    if usetree:
+        old = oldpts
+        closest_pts = old.transform(tree.frame.inv)
     for i in range(np.shape(s_i.data)[1]):
-        if not linear:
-            c = findClosestPoint(s_i.data[:,i], vCoords, vInd, spheres)
-            c_ij[:, i] = c[:]
-        else:
+        if linear:
             c = findClosestPointLinear(s_i.data[:, i], vCoords, vInd)
+            c_ij[:, i] = c[:]
+        elif usetree:
+            old_i = closest_pts.data[:, i]
+            dist = np.linalg.norm(old_i - s_i.data[:, i])
+            closest = [old_i]
+            tree.FindClosestPoint(s_i.data[:, i], dist, closest)
+            c_ij[:, i] = closest[0][:]
+        else:
+            c = findClosestPoint(s_i.data[:, i], vCoords, vInd, spheres)
             c_ij[:, i] = c[:]
     return pc.PointCloud(c_ij)
 
