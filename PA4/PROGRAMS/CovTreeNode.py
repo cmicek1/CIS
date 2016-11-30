@@ -44,7 +44,7 @@ class CovTreeNode:
         else:
             for i in range(self.num_tri):
                 bound, closest = self.UpdateClosest(self.triangle_list[i], v, bound, closest)
-       # print closest
+
 
     def _FindCovFrame(self, *args):
         if len(args) == 1:
@@ -87,6 +87,7 @@ class CovTreeNode:
 
             return fr.Frame(r, c)
 
+
     def _FindBoundingBox(self, n):
         LB = pc.PointCloud(self.triangle_list[0].SortPoint()).transform(self.frame.inv).data
         bounds = [LB, LB]
@@ -94,6 +95,7 @@ class CovTreeNode:
             bounds = self.triangle_list[k].EnlargeBounds(self.frame, bounds)
         self.bounds = bounds
         return bounds
+
 
     def _SplitSort(self, num):
         points = []
@@ -107,6 +109,7 @@ class CovTreeNode:
         possible_splits = np.any(np.diff(np.signbit(points[0, :])))
         if possible_splits:
             return np.where(np.diff(np.signbit(points[0, :])))[0][0]
+
 
     def _ConstructSubtrees(self):
         if len(self.triangle_list) <= 1:

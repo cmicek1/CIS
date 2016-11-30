@@ -4,15 +4,31 @@ import ICPmatching as icpm
 
 
 class Triangle:
+    """
+    Class for a Triangle thing with a bounding sphere.
+    """
     def __init__(self, corners):
+        """
+        Initializes the triangle with a point cloud of corners.
+        :param corners: Coordinates of the three corners of the triangle.
+        :type corners: pc.Pointcloud
+        """
         self.corners = corners
         data = self.corners.data
         p, q, r = data[:, 0], data[:, 1], data[:, 2]
         q, r = bs.calcCenterandRadius(p, q, r)
         self.sphere = bs.BoundingSphere(q, r)
 
+
     def SortPoint(self):
+        """
+        Calculates the "sort point" for a triangle aka the mean of the corners.
+
+        :return: the sort point
+        :rtype: np.array(np.float64) 3 X 1
+        """
         return np.mean(self.corners.data, axis=1, keepdims=True)
+
 
     def ClosestPointTo(self, v):
         data = self.corners.data
