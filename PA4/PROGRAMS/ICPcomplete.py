@@ -60,16 +60,17 @@ def iterativeFramePointFinder(vCoords, vIndices, d_kPoints):
  #   bbtree = bb.BoundingBoxTreeNode(triangles, len(triangles))
 
     old_pts = None
+    c_kPoints = None
 
     while (nIters < 100):
 
         s_i = d_kPoints.transform(F_reg)
 
         if nIters == 0:
-       #     temp = np.zeros(s_i.data.shape)
-       #     temp.fill(np.inf)
-       #     old_pts = pc.PointCloud(temp)
-            old_pts = s_i
+            temp = np.zeros(s_i.data.shape)
+            temp.fill(np.inf)
+            old_pts = pc.PointCloud(temp)
+            # c_kPoints = icpm.ICPmatch(s_i, vCoords, vIndices, spheres=spheres, oldpts=None, usetree=False, linear=True)
 
         c_kPoints = icpm.ICPmatch(s_i, vCoords, vIndices, spheres=spheres, tree=tree, oldpts=old_pts, usetree=True)
 
