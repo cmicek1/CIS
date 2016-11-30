@@ -76,6 +76,8 @@ def findClosestPoint(s_i, vCoords, vInd, spheres):
             if d < dist:
                 dist = d
                 minPoint = c_star
+                print spheres[i].c
+                print spheres[i].r
 
     return minPoint
 

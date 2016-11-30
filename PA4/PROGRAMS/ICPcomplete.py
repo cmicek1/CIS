@@ -48,7 +48,7 @@ def iterativeFramePointFinder(vCoords, vIndices, d_kPoints):
     triangles = []
 
     for i in range(vIndices.shape[1]):
-        t = tr.Triangle(pc.PointCloud(vCoords[:, vIndices[:, i].flatten()]))
+        t = tr.Triangle(pc.PointCloud(vCoords[:, vIndices[:, i]]))
         triangles.append(t)
 
     triangles = np.array(triangles)
@@ -62,17 +62,15 @@ def iterativeFramePointFinder(vCoords, vIndices, d_kPoints):
     old_pts = None
     c_kPoints = None
 
-    while (nIters < 100):
+    while (nIters < 40):
 
         s_i = d_kPoints.transform(F_reg)
 
         if nIters == 0:
-            temp = np.zeros(s_i.data.shape)
-            temp.fill(np.inf)
-            old_pts = pc.PointCloud(temp)
+            old_pts = pc.PointCloud(s_i.data + 1)
             # c_kPoints = icpm.ICPmatch(s_i, vCoords, vIndices, spheres=spheres, oldpts=None, usetree=False, linear=True)
 
-        c_kPoints = icpm.ICPmatch(s_i, vCoords, vIndices, spheres=spheres, tree=tree, oldpts=old_pts, usetree=True)
+        c_kPoints = icpm.ICPmatch(s_i, vCoords, vIndices, spheres=spheres, tree=tree, oldpts=old_pts, usetree=False)
 
         old_pts = s_i
 

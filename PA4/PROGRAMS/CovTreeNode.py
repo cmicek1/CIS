@@ -27,6 +27,8 @@ class CovTreeNode:
         if dist < bound[0]:
             bound[0] = dist
             closest[0] = cp
+        print t.sphere.c
+        print t.sphere.r
         return bound, closest
 
     def FindClosestPoint(self, v, bound, closest):
