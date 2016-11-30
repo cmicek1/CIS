@@ -72,7 +72,8 @@ def iterativeFramePointFinder(vCoords, vIndices, d_kPoints):
 
         c_kPoints = icpm.ICPmatch(s_i, vCoords, vIndices, spheres=spheres, tree=tree, oldpts=old_pts, usetree=True)
 
-        old_pts = pc.PointCloud(np.zeros(s_i.data.shape))
+        # What the actual fuck
+        old_pts = pc.PointCloud(s_i.data + np.random.random(s_i.data.shape))
 
         deltaF_reg = s_i.register(c_kPoints)
 
