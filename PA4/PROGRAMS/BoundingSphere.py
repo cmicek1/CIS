@@ -69,39 +69,3 @@ def createBS(vCoords, vInd):
 
     return bs
 
-def centroid(BSList, nS):
-    c = np.zeros([3, 1])
-    for i in range(nS):
-        c[0] += BSList[i].c[0]
-        c[1] += BSList[i].c[1]
-        c[2] += BSList[i].c[2]
-    c = c/nS
-    return c
-
-def findMaxCoordinates(BSList, ns):
-    max = np.zeros([3, 1])
-    for i in range(ns):
-        thisSphere = BSList[i]
-        if (thisSphere.c[0] > max[0] and thisSphere.c[1] > max[1] and thisSphere.c[2] > max[2]):
-            max[0] = thisSphere.c[0]
-            max[1] = thisSphere.c[1]
-            max[2] = thisSphere.c[2]
-    return max
-
-def findMinCoordinates(BSList, ns):
-    min = np.zeros([3, 1])
-    for i in range(ns):
-        thisSphere = BSList[i]
-        if (thisSphere.c[0] < min[0] and thisSphere.c[1] < min[1] and thisSphere.c[2] < min[2]):
-            min[0] = thisSphere.c[0]
-            min[1] = thisSphere.c[1]
-            min[2] = thisSphere.c[2]
-    return min
-
-def findMaxRadius(BSList, ns):
-    max = 0
-    for i in range(ns):
-        if (BSList[i].r > max):
-            max = BSList[i].r
-    return max
-

@@ -5,6 +5,9 @@ import PointCloud as pc
 
 
 class CovTreeNode:
+    """
+    Class for node in a covariance tree.
+    """
     def __init__(self, triangles, num_tri):
         # Data type should be numpy object array
         self.triangle_list = triangles
@@ -21,14 +24,10 @@ class CovTreeNode:
             return bound, closest
         # Here closest is a one-element list
         cp = t.ClosestPointTo(v)
-        # if np.all(np.abs(cp - v) < 0.2):
-        #     print 'Eureka!'
         dist = np.linalg.norm(cp - v)
         if dist < bound[0]:
             bound[0] = dist
             closest[0] = cp
-        # print t.sphere.c
-        # print t.sphere.r
         return bound, closest
 
     def FindClosestPoint(self, v, bound, closest):

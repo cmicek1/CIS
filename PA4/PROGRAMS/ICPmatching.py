@@ -1,7 +1,5 @@
 import numpy as np
 import numpy.linalg as numalg
-import BoundingSphere as bs
-import BoundingBoxTreeNode as bb
 import PointCloud as pc
 
 def findTipB(aFrames, bFrames, ledA, tipA, ledB):

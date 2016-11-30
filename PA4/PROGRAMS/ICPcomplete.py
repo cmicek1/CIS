@@ -7,7 +7,6 @@ import PointCloud as pc
 import BoundingSphere as bs
 import Triangle as tr
 import CovTreeNode as ctn
-import BoundingBoxTreeNode as bb
 
 def completeICP(meshfile, bodyA, bodyB, sampleData):
     """
@@ -79,7 +78,7 @@ def iterativeFramePointFinder(vCoords, vIndices, d_kPoints):
 
         F_regNew = deltaF_reg.compose(F_reg)
 
-        if isClose(.0000001, F_reg, F_regNew):
+        if isClose(.00001, F_reg, F_regNew):
             return c_kPoints, F_reg
 
         F_reg = F_regNew
