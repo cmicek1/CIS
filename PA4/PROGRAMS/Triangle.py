@@ -22,16 +22,16 @@ class Triangle:
     def EnlargeBounds(self, frame, bounds):
         FiC = self.corners.transform(frame.inv)
 
-     #   for i in range(3):
-     #       bounds[0] = np.amin(np.hstack((bounds[0], FiC.data[:, i].reshape((3, 1)))), axis=1, keepdims=True)
-     #       bounds[1] = np.amax(np.hstack((bounds[1], FiC.data[:, i].reshape((3, 1)))), axis=1, keepdims=True)
         for i in range(3):
-            bounds[0][0] = min(bounds[0][0], FiC.data[i][0])
-            bounds[0][1] = min(bounds[0][1], FiC.data[i][1])
-            bounds[0][2] = min(bounds[0][2], FiC.data[i][2])
-            bounds[1][0] = max(bounds[1][0], FiC.data[i][0])
-            bounds[1][1] = max(bounds[1][1], FiC.data[i][1])
-            bounds[1][2] = max(bounds[1][2], FiC.data[i][2])
+            bounds[0] = np.amin(np.hstack((bounds[0], FiC.data[:, i].reshape((3, 1)))), axis=1, keepdims=True)
+            bounds[1] = np.amax(np.hstack((bounds[1], FiC.data[:, i].reshape((3, 1)))), axis=1, keepdims=True)
+        # for i in range(3):
+        #     bounds[0][0] = min(bounds[0][0], FiC.data[i][0])
+        #     bounds[0][1] = min(bounds[0][1], FiC.data[i][1])
+        #     bounds[0][2] = min(bounds[0][2], FiC.data[i][2])
+        #     bounds[1][0] = max(bounds[1][0], FiC.data[i][0])
+        #     bounds[1][1] = max(bounds[1][1], FiC.data[i][1])
+        #     bounds[1][2] = max(bounds[1][2], FiC.data[i][2])
 
         return bounds
 
