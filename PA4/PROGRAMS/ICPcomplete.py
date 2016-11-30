@@ -8,6 +8,7 @@ import PointCloud as pc
 import Triangle as tr
 import CovTreeNode as ctn
 
+
 def completeICP(meshfile, bodyA, bodyB, sampleData):
     """
     :param meshfile: path to file that defines surface mesh
