@@ -1,0 +1,37 @@
+Julie Shade and Chris Micek
+Computer Integrated Surgery
+Fall 2016
+Programming Assignment 4
+***----------------------------------------List of Source Code Files----------------------------------------------***
+PA4_driver.py: contains main method that parses command line input, sends appropriate input to ICP matching functions,
+and writes output to a file.
+Frame.py: Frame class, contains data members for rotation and translation as well as commonly needed frame methods
+such as composition and inversion.
+PointCloud.py: PointCloud class, a list of points in a given point cloud and commonly needed methods such as
+registration between two point clouds and transformation of an entire point cloud by a given frame. Also contains
+code for translating input files into lists of PointClouds.
+ICPfilereading.py: Contains functions that read input from different file formats in this problem and put data into
+the correct data structures.
+ICPmatching.py: Contains functions to perform matching part of ICP algorithm.
+BoundingSphere.py: Contains BoundingSphere class definition and methods.
+CovTreeNode.py: Contains CovTreeNode class definition and covariance tree methods.
+Triangle.py: Contains triangle class definition and methods.
+ICPcomplete.py: Contains functions to perform complete ICP algorithm (added for this assignment).
+testICP.py: Contains functions that test basic methods used in other parts of the program to ensure all parts are
+working separately and together.
+
+***----------------------------------------Instructions for Use----------------------------------------------***
+The workflow of our code is as follows: From the command line, the user has two choices—either run test cases, or
+execute the necessary calibration and registration steps on a set of input data.
+To test, run the following:
+python PA4_driver.py test tolerance(optional)
+This will run several test functions to validate each part of our ICP algorithm, described in more detail later.
+Here “tolerance” is the maximum allowable difference between generated and calculated output (by default 1e-4).
+To run the program on a set of input files, either ensure that all necessary files are in a directory within the
+PROGRAMS directory, and specify the set of test data x-ddddd:
+
+python PA4_driver.py “filepath” x-ddddd
+
+As a concrete example: python PA4_driver.py "PA234 - Student Data" A-Debug
+The code then reads in all files, including the surface mesh and body calibration files that must be in the specified
+directory, executes the complete ICP algorithm, and outputs results to “OUTPUT\PA4-x-ddddd-Output.txt”.
