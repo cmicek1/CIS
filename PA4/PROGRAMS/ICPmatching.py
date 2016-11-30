@@ -147,10 +147,20 @@ def ICPmatch(s_i, vCoords, vInd, spheres=None, tree=None, oldpts=None, linear=Fa
     :param s_i: PointCloud of points to find closest point
     :param vCoords: Coordinates of each vertex on surface
     :param vInd: Indices of vertices for each triangle on surface
+    :param spheres: List of bounding spheres around triangles on surface.
+    :param tree: tree data strucutre to search from (optional)
+    :param oldpts: old closest points (optional)
+    :param linear: true if linear search should be performed
+    :param usetree: true if tree search should be used
 
     :type s_i: PointCloud.PointCloud
     :type vCoords: np.array([np.float64]) 3 x N
     :type vInd: np.array([np.float64]) 3 x M
+    :type spheres: [bs.BoundingSphere]
+    :type tree: tree.CovTreeNode
+    :type oldpts: pc.PointCloud
+    :type linear: bool
+    :type usetree: bool
 
     :return: closest point on surface to each point in s_i
     :rtype: pc.PointCloud

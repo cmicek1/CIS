@@ -39,7 +39,22 @@ def completeICP(meshfile, bodyA, bodyB, sampleData):
 
 
 def iterativeFramePointFinder(vCoords, vIndices, d_kPoints):
+    """
+    Finds registration transformation Freg between rigid body B and bone through iterative closest point finding.
+    :param vCoords: coordinates of all vertices on mesh
+    :param vIndices: indices of vertices for each triangle on mesh
+    :param d_kPoints: starting positions of tip of rigid body A
 
+    :type vCoords: np.array([np.float64]) 3 x N
+    :type vIndices: np.array([np.float64]) 3 x M
+    :type d_kPoints: pc.PointCloud
+
+    :return c_kPoints: Transformed tip positions in bone coordinate system
+    :return F_reg: Registration frame between bone and rigid body B
+
+    :rtype c_kPoints: pc.PointCloud
+    :rtype F_reg: fr.Frame
+    """
     F_reg = fr.Frame(np.identity(3), np.zeros([3, 1]))
 
     nIters = 0
@@ -97,6 +112,22 @@ def iterativeFramePointFinder(vCoords, vIndices, d_kPoints):
 
 
 def isClose(tolerance, F_reg, F_regNew, prev_error):
+    """
+    Tests if two frame transformations are within a given tolerance.
+    :param tolerance: Maximum sum of squared differences between F_reg and F_regNew
+    :param F_reg: First frame transformation
+    :param F_regNew: Second frame transformation
+    :param prev_error: Deque of previous errors, to determine whether to use noise to help convergence
+
+    :type tolerance: np.float64
+    :type F_reg: fr.Frame
+    :type F_regNew: fr.Frame
+    :type prev_error: collections.deque
+
+    :return: True if difference is below tolerance, false otherwise
+
+    :rtype: bool
+    """
     err = 0
     for i in range(0, 3):
         err += math.pow(F_reg.p[i] - F_regNew.p[i], 2)
