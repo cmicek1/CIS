@@ -2,6 +2,7 @@ Julie Shade and Chris Micek
 Computer Integrated Surgery
 Fall 2016
 Programming Assignment 4
+
 ***----------------------------------------List of Source Code Files----------------------------------------------***
 PA4_driver.py: contains main method that parses command line input, sends appropriate input to ICP matching functions,
 and writes output to a file.
