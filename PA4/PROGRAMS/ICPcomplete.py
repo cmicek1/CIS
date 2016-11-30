@@ -1,10 +1,10 @@
+import math
+import collections
 import numpy as np
 import ICPmatching as icpm
 import ICPfilereading as icpf
 import Frame as fr
-import math
 import PointCloud as pc
-import BoundingSphere as bs
 import Triangle as tr
 import CovTreeNode as ctn
 
@@ -52,32 +52,42 @@ def iterativeFramePointFinder(vCoords, vIndices, d_kPoints):
 
     triangles = np.array(triangles)
 
+    print('Building tree...')
     tree = ctn.CovTreeNode(triangles, vIndices.shape[1])
-
-    spheres = bs.createBS(vCoords, vIndices)
-
- #   bbtree = bb.BoundingBoxTreeNode(triangles, len(triangles))
 
     old_pts = None
     c_kPoints = None
+    prev_error = collections.deque(maxlen=3)
+    prev_error.append(0)
+    thresh = 1
 
-    while (nIters < 40):
+    print('\nStarting ICP:')
+    while nIters < 40:
 
         s_i = d_kPoints.transform(F_reg)
 
         if nIters == 0:
             old_pts = pc.PointCloud(s_i.data + 1)
 
-        c_kPoints = icpm.ICPmatch(s_i, vCoords, vIndices, spheres=spheres, tree=tree, oldpts=old_pts, usetree=True)
+        c_kPoints = icpm.ICPmatch(s_i, vCoords, vIndices, tree=tree, oldpts=old_pts, usetree=True)
 
-        old_pts = pc.PointCloud(s_i.data + np.random.random(s_i.data.shape))
+        old_pts = pc.PointCloud(s_i.data + np.random.random(s_i.data.shape) * thresh)
 
         deltaF_reg = s_i.register(c_kPoints)
 
         F_regNew = deltaF_reg.compose(F_reg)
 
-        if isClose(.00001, F_reg, F_regNew):
+        if isClose(.000001, F_reg, F_regNew, prev_error):
             return c_kPoints, F_reg
+
+        if len(prev_error) == prev_error.maxlen and not prev_error[0] == 0:
+            if (prev_error[1] < prev_error[0] and prev_error[1] < prev_error[2]) or (
+                        prev_error[0] < prev_error[1] and prev_error[2] < prev_error[1]):
+                thresh = 0
+            else:
+                thresh = 1
+
+        print('Iteration: ' + str(nIters) + ',   error = ' + str(prev_error[-1]))
 
         F_reg = F_regNew
 
@@ -86,15 +96,16 @@ def iterativeFramePointFinder(vCoords, vIndices, d_kPoints):
     return c_kPoints, F_reg
 
 
-def isClose(tolerance, F_reg, F_regNew):
+def isClose(tolerance, F_reg, F_regNew, prev_error):
     err = 0
     for i in range(0, 3):
         err += math.pow(F_reg.p[i] - F_regNew.p[i], 2)
         for j in range(0, 3):
             err += math.pow(F_reg.r[i][j] - F_regNew.r[i][j], 2)
 
-    print err
-    if err < tolerance:
+    if err < tolerance or abs(err - prev_error[0]) < tolerance:
         return True
+
+    prev_error.append(err)
     return False
 
