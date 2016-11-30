@@ -42,7 +42,7 @@ class CovTreeNode:
         else:
             for i in range(self.num_tri):
                 bound, closest = self.UpdateClosest(self.triangle_list[i], v, bound, closest)
-        # print closest
+       # print closest
 
     def _FindCovFrame(self, *args):
         if len(args) == 1:
@@ -100,7 +100,7 @@ class CovTreeNode:
         points = np.array(points).squeeze().T
         inds = np.argsort(points[0, :])
         points = points[:, inds]
-        # self.triangle_list = self.triangle_list[inds]
+        self.triangle_list = self.triangle_list[inds]
 
         possible_splits = np.any(np.diff(np.signbit(points[0, :])))
         if possible_splits:
