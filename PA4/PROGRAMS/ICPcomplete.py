@@ -73,7 +73,7 @@ def iterativeFramePointFinder(vCoords, vIndices, d_kPoints):
 
     old_pts = None
     c_kPoints = None
-    prev_error = collections.deque(maxlen=3)
+    prev_error = collections.deque(maxlen=4)
     prev_error.append(0)
     thresh = 1
 
@@ -93,15 +93,15 @@ def iterativeFramePointFinder(vCoords, vIndices, d_kPoints):
 
         F_regNew = deltaF_reg.compose(F_reg)
 
-        if isClose(.000001, F_reg, F_regNew, prev_error):
+        if isClose(.00000001, F_reg, F_regNew, prev_error):
             return c_kPoints, F_reg
 
-        if len(prev_error) == prev_error.maxlen and not prev_error[0] == 0:
-            if (prev_error[1] < prev_error[0] and prev_error[1] < prev_error[2]) or (
-                        prev_error[0] < prev_error[1] and prev_error[2] < prev_error[1]):
-                thresh = 0
-            else:
-                thresh = 1
+        if len(prev_error) == prev_error.maxlen and not prev_error[0] == 0 and nIters % 5 == 0:
+            if prev_error[3] > prev_error[0]:
+                if thresh == 1:
+                    thresh = 0
+                else:
+                    thresh = 1
 
         print('Iteration: ' + str(nIters) + ',   error = ' + str(prev_error[-1]))
 
