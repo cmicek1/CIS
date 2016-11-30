@@ -9,7 +9,14 @@ class CovTreeNode:
     Class for node in a covariance tree.
     """
     def __init__(self, triangles, num_tri):
-        # Data type should be numpy object array
+        """
+        Initializes a covariance tree data structure for a given surface.
+        :param triangles: list of Triangles on the surface
+        :param num_tri: number of Triangles on the surface
+
+        :type triangles: np.array([Triangle])
+        :type num_tri: integer
+        """
         self.triangle_list = triangles
         self.num_tri = num_tri
         self.bounds = None
@@ -20,6 +27,25 @@ class CovTreeNode:
         self._FindBoundingBox(self.num_tri)
 
     def UpdateClosest(self, t, v, bound, closest):
+        """
+        Finds the closest point to a vector v on a given triangle t, or decides not to search closesly if the point
+        is outside the bounding sphere of t.
+        :param t: Triangle to find closest point on
+        :param v: Point to find closest point to
+        :param bound: distance from current closest point
+        :param closest: Current closest point in bounding box
+
+        :type t: Triangle
+        :type v: np.array(np.float64) 3 X 1
+        :type bound: np.float64
+        :type closest: np.array(np.float64) 3 X 1
+
+        :return bound: the new distance to the new closest point, or old distance if no new closest point found
+        :return closest: the current closest point
+
+        :rtype bound: np.float64
+        :rtype closest: np.array(np.float64) 3 X 1
+        """
         if np.linalg.norm(v - t.sphere.c) - t.sphere.r > bound[0]:
             return bound, closest
         # Here closest is a one-element list
@@ -30,7 +56,21 @@ class CovTreeNode:
             closest[0] = cp
         return bound, closest
 
+
     def FindClosestPoint(self, v, bound, closest):
+        """
+        Finds the closest point to v on or below this node.
+        :param v: the point to find the closest point to
+        :param bound: distance between this point and the current closest point
+        :param closest: current closest point or estimate
+
+        :type v: np.array(np.float64) 3 X 1
+        :type bound: integer
+        :type closest: np.array(np.float64) 3 X 1
+
+        :return: None if no closest point found
+
+        """
         temp = (self.frame.inv.r.dot(v.reshape((3, 1))) + self.frame.inv.p).flatten()
         # Note: To pass by reference, closest should be a mutable type (e.g. a list)
         if np.any(temp.reshape((3, 1)) < (self.bounds[0] - bound[0])) or (
@@ -47,6 +87,14 @@ class CovTreeNode:
 
 
     def _FindCovFrame(self, *args):
+        """
+        Finds the frame of this covariance tree node.
+        :param args: Either just the number of triangles, or the number of triangles and a list of triangles.
+        :type args: integer and [Triangle]
+
+        :return: The frame of this covariance tree node
+        :rtype: fr.Frame
+        """
         if len(args) == 1:
             points = None
             num_triangles = args[0]
@@ -89,6 +137,14 @@ class CovTreeNode:
 
 
     def _FindBoundingBox(self, n):
+        """
+        Finds the upper and lower bounds of a bounding box around this covariance tree.
+        :param n: Number of triangles in the covariance tree.
+        :type n: integer
+
+        :return: upper and lower bounds of bounding box around this covariance tree
+        :rtype: []
+        """
         LB = pc.PointCloud(self.triangle_list[0].SortPoint()).transform(self.frame.inv).data
         bounds = [LB, LB]
         for k in range(n):
@@ -98,6 +154,14 @@ class CovTreeNode:
 
 
     def _SplitSort(self, num):
+        """
+        Splits and sorts triangles based on their x coordinate.
+        :param num: Number of triangles in this covariance tree.
+        :type num: integer
+
+        :return: index in list of triangles where split occurs
+        :rtype: integer
+        """
         points = []
         for k in range(num):
             points.append(pc.PointCloud(self.triangle_list[k].SortPoint()).transform(self.frame.inv).data.tolist())
@@ -112,6 +176,11 @@ class CovTreeNode:
 
 
     def _ConstructSubtrees(self):
+        """
+        Constructs subtrees based on list of triangles in this covariance tree.
+
+        :return: None
+        """
         if len(self.triangle_list) <= 1:
             return
 
