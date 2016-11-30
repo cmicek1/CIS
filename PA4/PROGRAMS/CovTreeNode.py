@@ -17,7 +17,7 @@ class CovTreeNode:
         self._FindBoundingBox(self.num_tri)
 
     def UpdateClosest(self, t, v, bound, closest):
-        if np.linalg.norm(v - t.sphere.c) - t.sphere.r >= np.linalg.norm(v - closest[0]):
+        if np.linalg.norm(v - t.sphere.c) - t.sphere.r > bound[0]:
             return bound, closest
         # Here closest is a one-element list
         cp = t.ClosestPointTo(v)
@@ -27,14 +27,15 @@ class CovTreeNode:
         if dist < bound[0]:
             bound[0] = dist
             closest[0] = cp
-        print t.sphere.c
-        print t.sphere.r
+        # print t.sphere.c
+        # print t.sphere.r
         return bound, closest
 
     def FindClosestPoint(self, v, bound, closest):
         temp = (self.frame.inv.r.dot(v.reshape((3, 1))) + self.frame.inv.p).flatten()
         # Note: To pass by reference, closest should be a mutable type (e.g. a list)
-        if np.any(temp.reshape((3, 1)) < (self.bounds[0] - bound[0])) or np.any(temp.reshape((3, 1)) > (self.bounds[1] + bound[0])):
+        if np.any(temp.reshape((3, 1)) < (self.bounds[0] - bound[0])) or (
+                np.any(temp.reshape((3, 1)) > (self.bounds[1] + bound[0]))):
             return
 
         if self.has_subtrees:

@@ -171,7 +171,8 @@ def ICPmatch(s_i, vCoords, vInd, spheres=None, tree=None, oldpts=None, linear=Fa
             old_i = closest_pts.data[:, i]
             dist = np.linalg.norm(old_i - s_i.data[:, i])
             closest = [old_i]
-            tree.FindClosestPoint(s_i.data[:, i], [dist], closest)
+            bound = [dist]
+            tree.FindClosestPoint(s_i.data[:, i], bound, closest)
             c_ij[:, i] = closest[0][:]
         else:
             c = findClosestPoint(s_i.data[:, i], vCoords, vInd, spheres)
