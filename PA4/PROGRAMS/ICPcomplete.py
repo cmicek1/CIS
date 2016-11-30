@@ -80,7 +80,7 @@ def iterativeFramePointFinder(vCoords, vIndices, d_kPoints):
 
         F_regNew = deltaF_reg.compose(F_reg)
 
-        if isClose(.000001, F_reg, F_regNew):
+        if isClose(.001, F_reg, F_regNew):
             return c_kPoints, F_reg
 
         F_reg = F_regNew
