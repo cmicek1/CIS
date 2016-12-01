@@ -25,6 +25,7 @@ def main():
             print('\nTest Bounding Spheres')
             test.testMakeSphere(tolerance)
             test.testICPSpherical(tolerance)
+            test.testTriangle(tolerance)
         else:
             # run tests with no given tolerance
             test.testFindTipB()
@@ -34,6 +35,7 @@ def main():
             print('\nTest Bounding Spheres')
             test.testMakeSphere()
             test.testICPSpherical()
+            test.testTriangle()
 
         print('\nAll tests passed!')
         sys.exit(0)

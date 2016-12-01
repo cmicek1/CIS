@@ -1,7 +1,10 @@
 import numpy as np
 import PointCloud as pc
 import ICPmatching as icpm
+import Frame as fr
 import BoundingSphere as bs
+import Triangle as tr
+import CovTreeNode as ctn
 
 
 def testFindTipB(tolerance=1e-4):
@@ -274,7 +277,7 @@ def testICPMatchLinear(tolerance=1e-4):
     print(v_coords)
 
     print('\nCalculated points:')
-    c_calc = icpm.ICPmatch(pc.PointCloud(s), v_coords, tri_inds, True)
+    c_calc = icpm.ICPmatch(pc.PointCloud(s), v_coords, tri_inds, linear=True, usetree=False)
     print(c_calc.data)
 
     print('\nMatch within tolerance?')
@@ -292,7 +295,7 @@ def testICPMatchLinear(tolerance=1e-4):
     print(s)
 
     print('\nCalculated points:')
-    c_calc = icpm.ICPmatch(pc.PointCloud(s), v_coords, tri_inds, True)
+    c_calc = icpm.ICPmatch(pc.PointCloud(s), v_coords, tri_inds, linear=True, usetree=False)
     print(c_calc.data)
 
     print('\nMatch within tolerance?')
@@ -418,11 +421,12 @@ def testICPSpherical(tolerance=1e-4):
     print(v_coords)
 
     print('\nCalculated points (linear):')
-    c_calc1 = icpm.ICPmatch(pc.PointCloud(s), v_coords, tri_inds, True)
+    c_calc1 = icpm.ICPmatch(pc.PointCloud(s), v_coords, tri_inds, linear=True, usetree=False)
     print(c_calc1.data)
 
     print('\nCalculated points (spheres):')
-    c_calc2 = icpm.ICPmatch(pc.PointCloud(s), v_coords, tri_inds)
+    spheres = bs.createBS(v_coords, tri_inds)
+    c_calc2 = icpm.ICPmatch(pc.PointCloud(s), v_coords, tri_inds, spheres=spheres, usetree=False)
     print(c_calc2.data)
 
     print('\nMatch within tolerance?')
@@ -439,11 +443,12 @@ def testICPSpherical(tolerance=1e-4):
     print(s)
 
     print('\nCalculated points (linear):')
-    c_calc1 = icpm.ICPmatch(pc.PointCloud(s), v_coords, tri_inds, True)
+    c_calc1 = icpm.ICPmatch(pc.PointCloud(s), v_coords, tri_inds, linear=True, usetree=False)
     print(c_calc1.data)
 
     print('\nCalculated points (spheres):')
-    c_calc2 = icpm.ICPmatch(pc.PointCloud(s), v_coords, tri_inds)
+    spheres = bs.createBS(v_coords, tri_inds)
+    c_calc2 = icpm.ICPmatch(pc.PointCloud(s), v_coords, tri_inds, spheres=spheres,  usetree=False)
     print(c_calc2.data)
 
     print('\nMatch within tolerance?')
@@ -451,6 +456,82 @@ def testICPSpherical(tolerance=1e-4):
     print(np.all(np.abs(c_calc1.data - c_calc2.data) <= tolerance))
 
     print('\nBounding Sphere ICP tests passed!')
+
+
+def testTriangle(tolerance=1e-4):
+    print('\nTest Triangle Thing class methods')
+    print('\nMake a triangle with vertices (0, 0, 0), (1, 0, 0), and (0, 1, 0)')
+
+    verts = pc.PointCloud(np.array([[0, 1, 0], [0, 0, 1], [0, 0, 0]]))
+    t = tr.Triangle(verts)
+
+    print('Done')
+
+    print('\nTest SortPoint (i.e. centroid)')
+    print('Centroid expected:')
+    c_exp = np.array([[1.0/3], [1.0/3], [0]])
+    print(c_exp)
+
+    print('\nCentroid calculated:')
+    c = t.SortPoint()
+    print(c)
+
+    print('\nWithin tolerance?')
+    assert(np.all(np.abs(c - c_exp) <= tolerance))
+    print(np.all(np.abs(c - c_exp) <= tolerance))
+
+    print('\nTesting bounding box creation.')
+    print('Box expected:')
+    b_exp = [np.array([[0], [0], [0]]), np.array([[1], [1], [0]])]
+    print(b_exp)
+
+    print('\nBox calculated:')
+    f = fr.Frame(np.eye(3), np.zeros((3, 1)))
+    b = t.BoundingBox(f)
+    print(b)
+
+    print('\nWithin tolerance?')
+    passed = np.all([np.all(np.abs(b[0] - b_exp[0]) <= tolerance), np.all(np.abs(b[1] - b_exp[1]) <= tolerance)])
+    assert passed
+    print(passed)
+
+    print('\nTesting expansion of bounds.')
+    print('\nExpand bounds of triangle bounding box to (-1, -1, -1), (2, 3, 4):')
+
+    print('\nBox expected:')
+    b_exp = [np.array([[-1], [-1], [-1]]), np.array([[2], [3], [4]])]
+    print(b_exp)
+
+    print('\nBox calculated:')
+    f = fr.Frame(np.eye(3), np.zeros((3, 1)))
+    b = t.EnlargeBounds(f, b_exp)
+    print(b)
+
+    print('\nWithin tolerance?')
+    passed = np.all([np.all(np.abs(b[0] - b_exp[0]) <= tolerance), np.all(np.abs(b[1] - b_exp[1]) <= tolerance)])
+    assert passed
+    print(passed)
+
+    print('\nIf new box is smaller than old box, keep old box.')
+    print('Box to try:')
+    b_exp2 = [np.array([[0.25], [0.25], [0]]), np.array([[0.75], [0.5], [0]])]
+    print(b_exp2)
+
+    print('\nBox expected:')
+    b_exp = [np.array([[0], [0], [0]]), np.array([[1], [1], [0]])]
+    print(b_exp)
+
+    print('\nBox calculated:')
+    f = fr.Frame(np.eye(3), np.zeros((3, 1)))
+    b = t.EnlargeBounds(f, b_exp2)
+    print(b)
+
+    print('\nWithin tolerance?')
+    passed = np.all([np.all(np.abs(b[0] - b_exp[0]) <= tolerance), np.all(np.abs(b[1] - b_exp[1]) <= tolerance)])
+    assert passed
+    print(passed)
+
+    print('\nTriangle tests passed!')
 
 
 def _rotation(angles):
