@@ -35,10 +35,10 @@ class CovTreeNode:
         :param bound: distance from current closest point
         :param closest: Current closest point in bounding box
 
-        :type t: Triangle
+        :type t: Triangle.Triangle
         :type v: np.array(np.float64) 3 X 1
-        :type bound: np.float64
-        :type closest: np.array(np.float64) 3 X 1
+        :type bound: [np.float64]
+        :type closest: [np.array(np.float64) 3 X 1]
 
         :return bound: the new distance to the new closest point, or old distance if no new closest point found
         :return closest: the current closest point
@@ -48,14 +48,13 @@ class CovTreeNode:
         """
         if np.linalg.norm(v - t.sphere.c) - t.sphere.r > bound[0]:
             return bound, closest
-        # Here closest is a one-element list
+        # Here bound, closest are one-element lists (like passing by reference)
         cp = t.ClosestPointTo(v)
         dist = np.linalg.norm(cp - v)
         if dist < bound[0]:
             bound[0] = dist
             closest[0] = cp
         return bound, closest
-
 
     def FindClosestPoint(self, v, bound, closest):
         """
@@ -65,8 +64,8 @@ class CovTreeNode:
         :param closest: current closest point or estimate
 
         :type v: np.array(np.float64) 3 X 1
-        :type bound: integer
-        :type closest: np.array(np.float64) 3 X 1
+        :type bound: [np.float]
+        :type closest: [np.array(np.float64) 3 X 1]
 
         :return: None if no closest point found
 
@@ -84,7 +83,6 @@ class CovTreeNode:
         else:
             for i in range(self.num_tri):
                 bound, closest = self.UpdateClosest(self.triangle_list[i], v, bound, closest)
-
 
     def _FindCovFrame(self, *args):
         """
@@ -135,7 +133,6 @@ class CovTreeNode:
 
             return fr.Frame(r, c)
 
-
     def _FindBoundingBox(self, n):
         """
         Finds the upper and lower bounds of a bounding box around this covariance tree.
@@ -151,7 +148,6 @@ class CovTreeNode:
             bounds = self.triangle_list[k].EnlargeBounds(self.frame, bounds)
         self.bounds = bounds
         return bounds
-
 
     def _SplitSort(self, num):
         """
@@ -173,7 +169,6 @@ class CovTreeNode:
         possible_splits = np.any(np.diff(np.signbit(points[0, :])))
         if possible_splits:
             return np.where(np.diff(np.signbit(points[0, :])))[0][0]
-
 
     def _ConstructSubtrees(self):
         """

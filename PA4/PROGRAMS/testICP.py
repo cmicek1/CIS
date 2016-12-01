@@ -459,6 +459,14 @@ def testICPSpherical(tolerance=1e-4):
 
 
 def testTriangle(tolerance=1e-4):
+    """
+    Tests methods of the Triangle "Thing" class
+
+    :param tolerance: Max allowable error
+
+    :type tolerance: float
+    :return: None
+    """
     print('\nTest Triangle Thing class methods')
     print('\nMake a triangle with vertices (0, 0, 0), (1, 0, 0), and (0, 1, 0)')
 
@@ -532,6 +540,70 @@ def testTriangle(tolerance=1e-4):
     print(passed)
 
     print('\nTriangle tests passed!')
+
+
+def testICPTree(tolerance=1e-4):
+    """
+    Test covariance tree ICP performance by comparing to the search with Bounding Spheres
+    :param tolerance:
+    :return:
+    """
+    print('\nNow, test if tree ICP works by comparing to sphere case.')
+    v_coords = np.array([[0, 2, 0],
+                         [1, 2, 3],
+                         [0, 0, 0]], dtype=np.float64)
+    to_add = np.array([[4, 4, 4],
+                       [0, 0, 0],
+                       [0, 0, 0]], dtype=np.float64)
+    for i in range(2):
+        v_coords = np.hstack((v_coords, v_coords[:, (-3, -2, -1)] + to_add))
+    print('\nVertices:')
+    print(v_coords)
+    tri_inds = np.array([[0, 0, 1, 1],
+                         [1, 1, 2, 3],
+                         [2, 3, 5, 5]], dtype=int)
+    tri_inds = np.hstack((tri_inds, tri_inds + 3 * np.ones((3, 4), dtype=int), np.array([[6], [7], [8]], dtype=int)))
+
+    print('\nTriangle Indices:')
+    print(tri_inds)
+
+    s = v_coords.copy()
+    s[-1, :] += 4
+
+    print('\nPoints to search for:')
+    print(s)
+
+    print('\nExpected points:')
+    print(v_coords)
+
+    triangles = []
+
+    for i in range(tri_inds.shape[1]):
+        t = tr.Triangle(pc.PointCloud(v_coords[:, tri_inds[:, i]]))
+        triangles.append(t)
+
+    triangles = np.array(triangles)
+
+    print('Building tree...')
+    tree = ctn.CovTreeNode(triangles, tri_inds.shape[1])
+
+    print('\nCalculated points (spheres):')
+    spheres = bs.createBS(v_coords, tri_inds)
+    c_calc = icpm.ICPmatch(pc.PointCloud(s), v_coords, tri_inds, spheres=spheres, usetree=False)
+    print(c_calc.data)
+
+    old_pts = pc.PointCloud(s + np.inf)
+
+    c_calc2 = icpm.ICPmatch(pc.PointCloud(s), v_coords, tri_inds, tree=tree, oldpts=old_pts, usetree=True)
+
+    print('\nCalculated points (tree):')
+    print(c_calc2.data)
+
+    print('\nMatch within tolerance?')
+    assert np.all(np.abs(c_calc.data - c_calc2.data) <= tolerance)
+    print(np.all(np.abs(c_calc.data - c_calc2.data) <= tolerance))
+
+    print('\nTree ICP tests passed!')
 
 
 def _rotation(angles):

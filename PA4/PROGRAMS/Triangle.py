@@ -19,7 +19,6 @@ class Triangle:
         q, r = bs.calcCenterandRadius(p, q, r)
         self.sphere = bs.BoundingSphere(q, r)
 
-
     def SortPoint(self):
         """
         Calculates the "sort point" for a triangle aka the mean of the corners.
@@ -28,7 +27,6 @@ class Triangle:
         :rtype: np.array(np.float64) 3 X 1
         """
         return np.mean(self.corners.data, axis=1, keepdims=True)
-
 
     def ClosestPointTo(self, v):
         """
@@ -43,7 +41,6 @@ class Triangle:
         data = self.corners.data
         p, q, r = data[:, 0], data[:, 1], data[:, 2]
         return icpm.minPointonTriangle(v, p, q, r)
-
 
     def EnlargeBounds(self, frame, bounds):
         """
@@ -65,7 +62,6 @@ class Triangle:
 
         return bounds
 
-
     def BoundingBox(self, frame):
         """
         Defines a bounding box around this triangle.
@@ -79,10 +75,9 @@ class Triangle:
         return self.EnlargeBounds(frame, [np.array([[np.inf], [np.inf], [np.inf]]),
                                           np.array([[-np.inf], [-np.inf], [-np.inf]])])
 
-
     def MayBeInBounds(self, frame, bounds):
         """
-        Determines if this Triangle may be in a given bounding box.
+        Determines if this Triangle may be in a given bounding box. Implemented, but unused.
 
         :param frame: The reference frame of the bounding box.
         :param bounds: The upper and lower bounds of the bounding box.

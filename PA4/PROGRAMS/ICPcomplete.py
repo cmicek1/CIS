@@ -75,7 +75,6 @@ def iterativeFramePointFinder(vCoords, vIndices, d_kPoints):
     c_kPoints = None
     prev_error = collections.deque(maxlen=4)
     prev_error.append(0)
-    thresh = 1
 
     print('\nStarting ICP:')
     while nIters < 40:
@@ -83,25 +82,20 @@ def iterativeFramePointFinder(vCoords, vIndices, d_kPoints):
         s_i = d_kPoints.transform(F_reg)
 
         if nIters == 0:
-            old_pts = pc.PointCloud(s_i.data + 1)
+            # First guess is infinity
+            old_pts = pc.PointCloud(s_i.data + np.inf)
 
         c_kPoints = icpm.ICPmatch(s_i, vCoords, vIndices, tree=tree, oldpts=old_pts, usetree=True)
 
-        old_pts = pc.PointCloud(s_i.data + np.random.random(s_i.data.shape) * thresh)
+        # Update guess
+        old_pts = c_kPoints
 
         deltaF_reg = s_i.register(c_kPoints)
 
         F_regNew = deltaF_reg.compose(F_reg)
 
-        if isClose(.00000001, F_reg, F_regNew, prev_error):
-            return c_kPoints, F_reg
-
-        if len(prev_error) == prev_error.maxlen and not prev_error[0] == 0 and nIters % 5 == 0:
-            if prev_error[3] > prev_error[0]:
-                if thresh == 1:
-                    thresh = 0
-                else:
-                    thresh = 1
+        if isClose(.000001, F_reg, F_regNew, prev_error):
+            return c_kPoints, F_regNew
 
         print('Iteration: ' + str(nIters) + ',   error = ' + str(prev_error[-1]))
 
